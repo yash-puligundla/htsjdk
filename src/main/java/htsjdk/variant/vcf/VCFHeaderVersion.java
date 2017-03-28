@@ -26,6 +26,7 @@
 package htsjdk.variant.vcf;
 
 import htsjdk.tribble.TribbleException;
+import htsjdk.utils.Utils;
 
 /**
  * information that identifies each header version
@@ -47,7 +48,7 @@ public enum VCFHeaderVersion {
      * @param vString the version string
      * @param fString the format string
      */
-    VCFHeaderVersion(String vString, String fString) {
+     VCFHeaderVersion(String vString, String fString) {
         this.versionString = vString;
         this.formatString = fString;
     }
@@ -99,6 +100,13 @@ public enum VCFHeaderVersion {
     }
 
     /**
+     * @return A VCF fileformat=version metadata string for this version.
+     */
+    public String getVersionLine() {
+        return String.format("%s=%s", getFormatString(), getVersionString());
+    }
+
+    /**
      * Utility function to clean up a VCF header string
      * 
      * @param s string
@@ -118,6 +126,18 @@ public enum VCFHeaderVersion {
         return this.ordinal() >= target.ordinal();
     }
 
+    /**
+     * Determine if twoheader versions are compatible. For now, the only incompatibility is between V4.3
+     * and any other version. All other versions are compatible.
+     * @param v1
+     * @param v2
+     * @return
+     */
+    public static boolean versionsAreCompatible(final VCFHeaderVersion v1, final VCFHeaderVersion v2) {
+        return !v1.equals(v2) &&
+                (v1.isAtLeastAsRecentAs(VCF4_3) || v2.isAtLeastAsRecentAs(VCF4_3));
+    }
+
     public String getVersionString() {
         return versionString;
     }
@@ -125,4 +145,5 @@ public enum VCFHeaderVersion {
     public String getFormatString() {
         return formatString;
     }
+
 }

@@ -27,7 +27,9 @@ package htsjdk.variant.bcf2;
 
 import htsjdk.samtools.util.FileExtensions;
 import htsjdk.tribble.TribbleException;
-import htsjdk.variant.vcf.*;
+import htsjdk.variant.vcf.VCFConstants;
+import htsjdk.variant.vcf.VCFHeader;
+import htsjdk.variant.vcf.VCFHeaderLine;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -93,10 +95,9 @@ public final class BCF2Utils {
         // set up the strings dictionary
         for ( VCFHeaderLine line : header.getMetaDataInInputOrder() ) {
             if ( line.shouldBeAddedToDictionary() ) {
-                final VCFIDHeaderLine idLine = (VCFIDHeaderLine)line;
-                if ( ! seen.contains(idLine.getID())) {
-                    dict.add(idLine.getID());
-                    seen.add(idLine.getID());
+                if ( ! seen.contains(line.getID())) {
+                    dict.add(line.getID());
+                    seen.add(line.getID());
                 }
             }
         }
@@ -291,7 +292,7 @@ public final class BCF2Utils {
      * Are the elements and their order in the output and input headers consistent so that
      * we can write out the raw genotypes block without decoding and recoding it?
      *
-     * If the order of INFO, FILTER, or contrig elements in the output header is different than
+     * If the order of INFO, FILTER, or contig elements in the output header is different than
      * in the input header we must decode the blocks using the input header and then recode them
      * based on the new output order.
      *
@@ -308,15 +309,15 @@ public final class BCF2Utils {
         if ( ! nullAsEmpty(outputHeader.getSampleNamesInOrder()).equals(nullAsEmpty(genotypesBlockHeader.getSampleNamesInOrder())) )
             return false;
 
-        final Iterator<? extends VCFIDHeaderLine> outputLinesIt = outputHeader.getIDHeaderLines().iterator();
-        final Iterator<? extends VCFIDHeaderLine> inputLinesIt = genotypesBlockHeader.getIDHeaderLines().iterator();
+        final Iterator<? extends VCFHeaderLine> outputLinesIt = outputHeader.getStructuredHeaderLines().iterator();
+        final Iterator<? extends VCFHeaderLine> inputLinesIt = genotypesBlockHeader.getStructuredHeaderLines().iterator();
 
         while ( inputLinesIt.hasNext() ) {
             if ( ! outputLinesIt.hasNext() ) // missing lines in output
                 return false;
 
-            final VCFIDHeaderLine outputLine = outputLinesIt.next();
-            final VCFIDHeaderLine inputLine = inputLinesIt.next();
+            final VCFHeaderLine outputLine = outputLinesIt.next();
+            final VCFHeaderLine inputLine = inputLinesIt.next();
 
             if ( ! inputLine.getClass().equals(outputLine.getClass()) || ! inputLine.getID().equals(outputLine.getID()) )
                 return false;

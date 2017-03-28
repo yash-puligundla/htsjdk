@@ -62,7 +62,7 @@ public class BCF2Codec extends BinaryFeatureCodec<VariantContext> {
 
     /** sizeof a BCF header (+ min/max version). Used when trying to detect when a streams starts with a bcf header */
     public static final int SIZEOF_BCF_HEADER =  BCFVersion.MAGIC_HEADER_START.length + 2*Byte.BYTES;
-    
+
     private BCFVersion bcfVersion = null;
 
     private VCFHeader header = null;
@@ -230,6 +230,10 @@ public class BCF2Codec extends BinaryFeatureCodec<VariantContext> {
 
     @Override
     public boolean canDecode( final String path ) {
+        // TODO: this is broken in a couple of ways:
+        // First, the version check is too permissive - it accepts any minor version, including BCF 2.2,
+        // which it shouldn't. Second, it doesn't recognize that BCF can be block gzipped, so it rejects
+        // those files because the header never matches, but only because the stream isn't decompressed.
         try (InputStream fis = Files.newInputStream(IOUtil.getPath(path)) ){
             final BCFVersion version = BCFVersion.readBCFVersion(fis);
             return version != null && version.getMajorVersion() == ALLOWED_MAJOR_VERSION;
@@ -501,10 +505,10 @@ public class BCF2Codec extends BinaryFeatureCodec<VariantContext> {
     protected void error(final String message) throws RuntimeException {
         throw new TribbleException(String.format("%s, at record %d with position %d:", message, recordNo, pos));
     }
-    
+
     /** try to read a BCFVersion from an uncompressed BufferedInputStream.
      * The buffer must be large enough to contain {@link #SIZEOF_BCF_HEADER}
-     * 
+     *
      * @param uncompressedBufferedInput the uncompressed input stream
      * @return the BCFVersion if it can be decoded, or null if not found.
      * @throws IOException
@@ -515,5 +519,5 @@ public class BCF2Codec extends BinaryFeatureCodec<VariantContext> {
         uncompressedBufferedInput.reset();
         return bcfVersion;
     }
-    
+
 }
