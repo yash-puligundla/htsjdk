@@ -472,50 +472,6 @@ public abstract class AbstractVCFCodec extends AsciiFeatureCodec<VariantContext>
 	}
 
     /**
-     * Create and return a VCFAltHeaderLine object from a header line string that conforms to the {@code sourceVersion}
-     * @param headerLineString VCF header line being parsed without the leading "##ALT="
-     * @param sourceVersion the VCF header version derived from which the source was retrieved. The resulting header
-     *                      line object should be validate for this header version.
-     * @return a VCFAltHeaderLine object
-     */
-    public VCFAltHeaderLine getAltHeaderLine(final String headerLineString, final VCFHeaderVersion sourceVersion) {
-        return new VCFAltHeaderLine(headerLineString, sourceVersion);
-    }
-
-    /**
-     * Create and return a VCFPedigreeHeaderLine object from a header line string that conforms to the {@code sourceVersion}
-     * @param headerLineString VCF header line being parsed without the leading "##PEDIGREE="
-     * @param sourceVersion the VCF header version derived from which the source was retrieved. The resulting header
-     *                      line object should be validate for this header version.
-     * @return a VCFPedigreeHeaderLine object
-     */
-    public VCFPedigreeHeaderLine getPedigreeHeaderLine(final String headerLineString, final VCFHeaderVersion sourceVersion) {
-        return new VCFPedigreeHeaderLine(headerLineString, sourceVersion);
-    }
-
-    /**
-     * Create and return a VCFMetaHeaderLine object from a header line string that conforms to the {@code sourceVersion}
-     * @param headerLineString VCF header line being parsed without the leading "##META="
-     * @param sourceVersion the VCF header version derived from which the source was retrieved. The resulting header
-     *                      line object should be validate for this header version.
-     * @return a VCFMetaHeaderLine object
-     */
-    public VCFMetaHeaderLine getMetaHeaderLine(final String headerLineString, final VCFHeaderVersion sourceVersion) {
-        return new VCFMetaHeaderLine(headerLineString, sourceVersion);
-    }
-
-    /**
-     * Create and return a VCFSampleHeaderLine object from a header line string that conforms to the {@code sourceVersion}
-     * @param headerLineString VCF header line being parsed without the leading "##SAMPLE="
-     * @param sourceVersion the VCF header version derived from which the source was retrieved. The resulting header
-     *                      line object should be validate for this header version.
-     * @return a VCFSampleHeaderLine object
-     */
-    public VCFSampleHeaderLine getSampleHeaderLine(final String headerLineString, final VCFHeaderVersion sourceVersion) {
-        return new VCFSampleHeaderLine(headerLineString, sourceVersion);
-    }
-
-    /**
      * the fast decode function
      * @param line the line of text for the record
      * @return a feature, (not guaranteed complete) that has the correct start and stop

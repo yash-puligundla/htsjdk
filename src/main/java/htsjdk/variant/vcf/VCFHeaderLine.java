@@ -29,6 +29,7 @@ import htsjdk.tribble.TribbleException;
 import htsjdk.utils.Utils;
 
 import java.io.Serializable;
+import java.util.Map;
 
 /**
  * <p> Class VCFHeaderLine </p>

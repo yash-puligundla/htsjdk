@@ -114,11 +114,6 @@ public final class VCFConstants {
     public static final String META_HEADER_START = VCFHeader.METADATA_INDICATOR + META_HEADER_KEY;
     public static final int META_HEADER_OFFSET = META_HEADER_START.length() + 1;
 
-    public static final String FILTER_HEADER_START = "##FILTER";
-    public static final String FORMAT_HEADER_START = "##FORMAT";
-    public static final String INFO_HEADER_START = "##INFO";
-    public static final String ALT_HEADER_KEY = "ALT";
-    public static final String ALT_HEADER_START = VCFHeader.METADATA_INDICATOR + ALT_HEADER_KEY ;
     public static final String CONTIG_HEADER_KEY = "contig";
     public static final String CONTIG_HEADER_START = VCFHeader.METADATA_INDICATOR + CONTIG_HEADER_KEY;
     public static final int CONTIG_HEADER_OFFSET = CONTIG_HEADER_START.length() + 1;

@@ -178,7 +178,7 @@ public class VCFHeader implements Serializable {
         this.vcfHeaderVersion = establishHeaderVersion(vcfHeaderVersion, metaData);
 
         mMetaData.addAllMetaDataLines(metaData);
-        mMetaData.validateMetaDataLines(this.vcfVersion);
+        mMetaData.validateMetaDataLines(this.vcfHeaderVersion);
 
         checkForDeprecatedGenotypeLikelihoodsKey();
 
@@ -201,6 +201,33 @@ public class VCFHeader implements Serializable {
         this.vcfHeaderVersion = vcfHeaderVersion;
     }
 
+    /**
+     * Throw if {@code fromVersion} is not compatible with a {@code toVersion}. Generally, any version before
+     * version 4.2 can be up-converted to version 4.2, but not to version 4.3. Once a header is established as
+     * version 4.3, it cannot be up or down converted, and it must remain at version 4.3.
+     * @param fromVersion current version. May be null, in which case {@code toVersion} can be any version
+     * @param toVersion new version. Cannot be null.
+     * @throws TribbleException if {@code fromVersion} is not compatible with {@code toVersion}
+     */
+    public static void validateVersionTransition(final VCFHeaderVersion fromVersion, final VCFHeaderVersion toVersion) {
+        ValidationUtils.nonNull(toVersion);
+
+        final String errorMessageFormatString = "VCF cannot be automatically promoted from %s to %s";
+
+        // fromVersion can be null, in which case anything goes (any transition from null is legal)
+        if (fromVersion != null) {
+            if (toVersion.isAtLeastAsRecentAs(VCFHeaderVersion.VCF4_3)) {
+                if (!fromVersion.isAtLeastAsRecentAs(VCFHeaderVersion.VCF4_3)) {
+                    // we're trying to go from pre-v4.3 to v4.3+
+                    throw new TribbleException(String.format(errorMessageFormatString, fromVersion, toVersion));
+                }
+
+            } else if (fromVersion.equals(VCFHeaderVersion.VCF4_3)) {
+                // we're trying to go from v4.3 to pre-v4.3
+                throw new TribbleException(String.format(errorMessageFormatString, fromVersion, toVersion));
+            }
+        }
+    }
 
     /**
      * Establish the header version using the following precedence:
@@ -244,7 +271,7 @@ public class VCFHeader implements Serializable {
     * @return the VCFHeaderVersion for this header.
     */
     public VCFHeaderVersion getVCFHeaderVersion() {
-        return vcfVersion;
+        return vcfHeaderVersion;
     }
 
     /**
@@ -257,9 +284,9 @@ public class VCFHeader implements Serializable {
      */
     public void setHeaderVersion(final VCFHeaderVersion newVCFVersion) {
         Utils.nonNull(newVCFVersion, "A non-null VCFHeaderVersion must be provided");
-        if (!newVCFVersion.equals(vcfVersion)) {
+        if (!newVCFVersion.equals(vcfHeaderVersion)) {
             logger.warn(String.format("Changing VCFHeader version from %s to %s",
-                    vcfVersion.getVersionString(),
+                    vcfHeaderVersion.getVersionString(),
                     newVCFVersion.getVersionString()));
             // TODO: This can cause failures in code that used to succeed (i.e. Picard LiftOverVcf tests fail
             // if they're not modified to remove the embedded version line) since we now retain ##fileformat
@@ -282,7 +309,7 @@ public class VCFHeader implements Serializable {
      * @param headerLine header line to attempt to add
      */
     public void addMetaDataLine(final VCFHeaderLine headerLine) {
-        mMetaData.validateMetaDataLine(vcfVersion, headerLine);
+        mMetaData.validateMetaDataLine(vcfHeaderVersion, headerLine);
         mMetaData.addMetaDataLine(headerLine);
         checkForDeprecatedGenotypeLikelihoodsKey();
     }
@@ -593,7 +620,7 @@ public class VCFHeader implements Serializable {
         final Set<VCFHeaderVersion> vcfVersions = new HashSet<>(headers.size());
 
         for ( final VCFHeader source : headers ) {
-            validateAllowedVersionMerger(vcfVersions, source.getHeaderVersion());
+            validateAllowedVersionMerger(vcfVersions, source.getVCFHeaderVersion());
             for ( final VCFHeaderLine line : source.getMetaDataInSortedOrder()) {
 
                 String key = line.getKey();

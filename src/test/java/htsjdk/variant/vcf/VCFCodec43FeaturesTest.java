@@ -241,7 +241,7 @@ public class VCFCodec43FeaturesTest extends VariantBaseTest {
 
     // given a vcf file, extract a header line with the given key and ID, cast to the target
     // header line type (T) via the transformer function
-    private static <T extends VCFIDHeaderLine> T getHeaderLineFromTestFile(
+    private static <T extends VCFStructuredHeaderLine> T getHeaderLineFromTestFile(
             final Path testVCFFile,
             final String key,
             final String ID,

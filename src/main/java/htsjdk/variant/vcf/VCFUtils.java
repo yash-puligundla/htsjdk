@@ -62,7 +62,7 @@ public class VCFUtils {
     public static Set<VCFHeaderLine> smartMergeHeaders(
             final Collection<VCFHeader> headers,
             final boolean emitWarnings) throws IllegalStateException {
-        enforceHeaderVersionMergePolicy(headerVersions, source.getVCFHeaderVersion());
+        //enforceHeaderVersionMergePolicy(headerVersions, source.getVCFHeaderVersion());
         return VCFHeader.getMergedHeaderLines(headers, emitWarnings);
     }
 
@@ -83,6 +83,8 @@ public class VCFUtils {
                                         .collect(Collectors.joining(" "))));
             }
         }
+    }
+
     /**
      * Add / replace the contig header lines in the VCFHeader with the in the reference file and master reference dictionary
      *

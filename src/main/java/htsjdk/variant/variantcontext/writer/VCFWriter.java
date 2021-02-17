@@ -233,7 +233,7 @@ class VCFWriter extends IndexingVariantContextWriter {
         Utils.nonNull(header);
         Utils.nonNull(versionLine);
 
-        final VCFHeaderVersion vcfVersion = header.getHeaderVersion();
+        final VCFHeaderVersion vcfVersion = header.getVCFHeaderVersion();
         if (!vcfVersion.equals(VCFHeaderVersion.getHeaderVersion(versionLine))) {
             final String message = String.format("Attempt to write a version %s VCF header to a version %s VCF output",
                     vcfVersion.getVersionString(),

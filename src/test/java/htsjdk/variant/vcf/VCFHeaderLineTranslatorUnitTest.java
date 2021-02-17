@@ -119,7 +119,7 @@ public class VCFHeaderLineTranslatorUnitTest extends VariantBaseTest {
             VCFHeaderLineTranslator.parseLine(VCFHeaderVersion.VCF4_2, line, expectedTagOrder);
         }
         else {
-            VCFHeaderLineTranslator.parseLine(VCFHeaderVersion.VCF4_2, line, expectedTagOrder, recommendedTags);
+            VCFHeaderLineTranslator.parseLine(VCFHeaderVersion.VCF4_2, line, expectedTagOrder);
         }
     }
 
@@ -158,8 +158,7 @@ public class VCFHeaderLineTranslatorUnitTest extends VariantBaseTest {
         VCFHeaderLineTranslator.parseLine(
                 vcfVersion,
                 "<ID=X,Description=\"Y\">",
-                Arrays.asList("ID"),
-                Arrays.asList("Description")
+                Arrays.asList("ID", "Description")
         );
     }
 }

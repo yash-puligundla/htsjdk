@@ -287,7 +287,7 @@ public class VCFHeaderUnitTest extends VariantBaseTest {
     public void testVCFHeaderContigLineMissingLength() {
         final VCFHeader header = getHiSeqVCFHeader();
         final VCFContigHeaderLine contigLine = new VCFContigHeaderLine(
-                "<ID=chr1>", VCFHeaderVersion.VCF4_0, VCFHeader.CONTIG_KEY, 0);
+                "<ID=chr1>", VCFHeaderVersion.VCF4_0, 0);
         header.addMetaDataLine(contigLine);
         Assert.assertTrue(header.getContigLines().contains(contigLine), "Test contig line not found in contig header lines");
         Assert.assertTrue(header.getMetaDataInInputOrder().contains(contigLine), "Test contig line not found in set of all header lines");
@@ -313,7 +313,6 @@ public class VCFHeaderUnitTest extends VariantBaseTest {
             final VCFContigHeaderLine outrageousContigLine = new VCFContigHeaderLine(
                     "<ID=outrageousID,length=1234567890,assembly=FAKE,md5=f126cdf8a6e0c7f379d618ff66beb2da,species=\"Homo sapiens\">",
                     VCFHeaderVersion.VCF4_2,
-                    VCFHeader.CONTIG_KEY,
                     0);
             orderedList.add(outrageousContigLine);
             // make sure the extra contig line is outrageous enough to not collide with a real contig ID
@@ -330,12 +329,11 @@ public class VCFHeaderUnitTest extends VariantBaseTest {
 
     @Test
     public void testVCFSimpleHeaderLineGenericFieldGetter() {
-        VCFHeader header = createHeader(VCF4headerStrings);
+        VCFHeader header = createHeader(VCF42headerStrings);
         List<VCFFilterHeaderLine> filters = header.getFilterLines();
         VCFFilterHeaderLine filterHeaderLine = filters.get(0);
-        Map<String,String> genericFields = filterHeaderLine.getGenericFields();
-        Assert.assertEquals(genericFields.get("ID"),"NoQCALL");
-        Assert.assertEquals(genericFields.get("Description"),"Variant called by Dindel but not confirmed by QCALL");
+        Assert.assertEquals(filterHeaderLine.getGenericFieldValue("ID"),"NoQCALL");
+        Assert.assertEquals(filterHeaderLine.getGenericFieldValue("Description"),"Variant called by Dindel but not confirmed by QCALL");
     }
 
     @Test
@@ -500,7 +498,7 @@ public class VCFHeaderUnitTest extends VariantBaseTest {
         // create a new versioned header from this set (containing no fileformat line)
         // which should always default to 4.2
         VCFHeader vcfHeader = new VCFHeader(vcfVersion, metaDataSet, Collections.EMPTY_SET);
-        Assert.assertEquals(vcfHeader.getHeaderVersion(), vcfVersion);
+        Assert.assertEquals(vcfHeader.getVCFHeaderVersion(), vcfVersion);
     }
 
     @Test(dataProvider = "vcfVersions")
@@ -512,7 +510,7 @@ public class VCFHeaderUnitTest extends VariantBaseTest {
         // no conflict, and the resulting header's version should always match the requested version
         metaDataSet.add(new VCFHeaderLine(vcfVersion.getFormatString(), vcfVersion.getVersionString()));
         VCFHeader vcfHeader = new VCFHeader(vcfVersion, metaDataSet, Collections.EMPTY_SET);
-        Assert.assertEquals(vcfHeader.getHeaderVersion(), vcfVersion);
+        Assert.assertEquals(vcfHeader.getVCFHeaderVersion(), vcfVersion);
     }
 
     @Test(expectedExceptions = TribbleException.class)
@@ -537,7 +535,7 @@ public class VCFHeaderUnitTest extends VariantBaseTest {
         // the resulting header version should match the format line we embedded
         metaDataSet.add(new VCFHeaderLine(vcfVersion.getFormatString(), vcfVersion.getVersionString()));
         VCFHeader vcfHeader = new VCFHeader(metaDataSet, Collections.EMPTY_SET); //defaults to v4.2
-        Assert.assertEquals(vcfHeader.getHeaderVersion(), vcfVersion);
+        Assert.assertEquals(vcfHeader.getVCFHeaderVersion(), vcfVersion);
         vcfHeader.setHeaderVersion(vcfVersion);
     }
 
@@ -548,7 +546,7 @@ public class VCFHeaderUnitTest extends VariantBaseTest {
         // create a new header from this set (containing no fileformat line), no requested version in constructor
         VCFHeader vcfHeader = new VCFHeader(metaDataSet, Collections.EMPTY_SET); //defaults to v4.2
         vcfHeader.setHeaderVersion(vcfVersion);
-        Assert.assertEquals(vcfHeader.getHeaderVersion(), VCFHeader.DEFAULT_VCF_VERSION);
+        Assert.assertEquals(vcfHeader.getVCFHeaderVersion(), VCFHeader.DEFAULT_VCF_VERSION);
     }
 
     @DataProvider(name = "conflictingHeaderVersionPairs")
@@ -608,7 +606,7 @@ public class VCFHeaderUnitTest extends VariantBaseTest {
         //add in a fileformat line that matches the default version; create a new header
         metaDataSet.add(new VCFHeaderLine(VCFHeader.DEFAULT_VCF_VERSION.getFormatString(), VCFHeader.DEFAULT_VCF_VERSION.getVersionString()));
         VCFHeader vcfHeader = new VCFHeader(metaDataSet, Collections.EMPTY_SET);
-        Assert.assertEquals(vcfHeader.getHeaderVersion(), VCFHeader.DEFAULT_VCF_VERSION);
+        Assert.assertEquals(vcfHeader.getVCFHeaderVersion(), VCFHeader.DEFAULT_VCF_VERSION);
 
         // try to add another identical fileformat header line
         vcfHeader.addMetaDataLine(new VCFHeaderLine(VCFHeaderVersion.VCF4_2.getFormatString(), VCFHeader.DEFAULT_VCF_VERSION.getVersionString()));
@@ -621,7 +619,7 @@ public class VCFHeaderUnitTest extends VariantBaseTest {
         //add in a fileformat line that matches the default version; create a new header
         metaDataSet.add(new VCFHeaderLine(VCFHeader.DEFAULT_VCF_VERSION.getFormatString(), VCFHeader.DEFAULT_VCF_VERSION.getVersionString()));
         VCFHeader vcfHeader = new VCFHeader(metaDataSet, Collections.EMPTY_SET);
-        Assert.assertEquals(vcfHeader.getHeaderVersion(), VCFHeader.DEFAULT_VCF_VERSION);
+        Assert.assertEquals(vcfHeader.getVCFHeaderVersion(), VCFHeader.DEFAULT_VCF_VERSION);
 
         // now add a conflicting fileformat header line
         vcfHeader.addMetaDataLine(new VCFHeaderLine(VCFHeaderVersion.VCF4_1.getFormatString(), VCFHeaderVersion.VCF4_1.getVersionString()));
@@ -673,12 +671,12 @@ public class VCFHeaderUnitTest extends VariantBaseTest {
         Set<VCFHeaderLine> metaDataSet = getV42HeaderLinesWithNoFormatString();
         metaDataSet.add(new VCFHeaderLine(vcfVersion.getFormatString(), vcfVersion.getVersionString()));
         VCFHeader header = new VCFHeader(metaDataSet);
-        Assert.assertEquals(header.getHeaderVersion(), vcfVersion);
+        Assert.assertEquals(header.getVCFHeaderVersion(), vcfVersion);
 
         Set<VCFHeaderLine> conflictSet = getV42HeaderLinesWithNoFormatString();
         conflictSet.add(new VCFHeaderLine(conflictingVersion.getFormatString(), conflictingVersion.getVersionString()));
         VCFHeader conflictingHeader = new VCFHeader(conflictSet);
-        Assert.assertEquals(conflictingHeader.getHeaderVersion(), conflictingVersion);
+        Assert.assertEquals(conflictingHeader.getVCFHeaderVersion(), conflictingVersion);
 
         List<VCFHeader> headerList = new ArrayList<VCFHeader>(2);
         headerList.add(header);
@@ -689,7 +687,7 @@ public class VCFHeaderUnitTest extends VariantBaseTest {
 
         // create a header from the merged set, which should defautl to the default version
         VCFHeader mergedHeader = new VCFHeader(mergedSet);
-        Assert.assertEquals(mergedHeader.getHeaderVersion(), VCFHeader.DEFAULT_VCF_VERSION);
+        Assert.assertEquals(mergedHeader.getVCFHeaderVersion(), VCFHeader.DEFAULT_VCF_VERSION);
 
         // all the header lines in the merged set are also in the resulting header
         Assert.assertEquals(mergedHeader.getMetaDataInInputOrder(), mergedSet);
@@ -1004,6 +1002,9 @@ public class VCFHeaderUnitTest extends VariantBaseTest {
             pw = new PrintWriter(myTempFile);
         } catch (IOException e) {
             Assert.fail("Unable to make a temp file!");
+        }
+    }
+
     // Serialize/encode the header to a file, read metaData back in
     private Set<VCFHeaderLine> getRoundTripEncoded(VCFHeader header) throws IOException {
         File myTempFile = File.createTempFile("VCFHeader", "vcf");
