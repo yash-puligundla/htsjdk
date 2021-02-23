@@ -1,12 +1,13 @@
 package htsjdk.variant.vcf;
 
+import htsjdk.HtsjdkTest;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**
  * Test conditions that are unique to INFO lines (not covered by VCFCompoundHeaderLineUnitTest).
  */
-public class VCFInfoHeaderLineUnitTest {
+public class VCFInfoHeaderLineUnitTest extends HtsjdkTest {
 
     @Test
     public void testRepairInfoLineFlagTypeWithNonzeroCount() {

@@ -187,6 +187,7 @@ public abstract class VCFCompoundHeaderLine extends VCFStructuredHeaderLine {
         return VCFHeaderLineCount.decode(vcfVersion, countString);
     }
 
+    //TODO:this method should be replaced with separate overrides for INFO and FORMAT
     private int decodeCount(final String countString, final VCFHeaderLineCount requestedCountType) {
         int lineCount = VCFHeaderLineCount.VARIABLE_COUNT;
         if (requestedCountType.isFixedCount()) {
@@ -198,22 +199,26 @@ public abstract class VCFCompoundHeaderLine extends VCFStructuredHeaderLine {
             } catch (NumberFormatException e) {
                 throw new TribbleException.InvalidHeader(String.format("Invalid count value %s in VCF header field %s", lineCount, getID()));
             }
-            if (lineCount < 0) {
-                throw new TribbleException.InvalidHeader("Count < 0 for fixed size VCF header field " + getID());
-            }
-            if (getType() == VCFHeaderLineType.Flag && lineCount != 0) {
-                // This check is here on behalf of INFO lines (which are the only header line type allowed to have Flag
-                // type). A Flag type with a count value other than 0 violates the spec (at least v4.2 and v4.3), but
-                // to retain backward compatibility with previous implementations, we accept (and repair) and the line here.
-                updateGenericField(NUMBER_ATTRIBUTE, "0");
-                lineCount = 0;
-                if (VCFUtils.getVerboseVCFLogging()) {
-                    String message = String.format("FLAG fields must have a count value of 0, but saw count %d for header line %s. A value of 0 will be used",
-                            lineCount,
-                            getID());
-                    logger.warn(message);
+            if (getType() == VCFHeaderLineType.Flag) {
+                if (lineCount != 0) {
+                    // This check is here on behalf of INFO lines (which are the only header line type allowed to have Flag
+                    // type). A Flag type with a count value other than 0 violates the spec (at least v4.2 and v4.3), but
+                    // to retain backward compatibility with previous implementations, we accept (and repair) and the line here.
+                    updateGenericField(NUMBER_ATTRIBUTE, "0");
+                    lineCount = 0;
+                    if (VCFUtils.getVerboseVCFLogging()) {
+                        String message = String.format("FLAG fields must have a count value of 0, but saw count %d for header line %s. A value of 0 will be used",
+                                lineCount,
+                                getID());
+                        logger.warn(message);
+                    }
                 }
-            }
+            } else if (lineCount <= 0) {
+                    throw new TribbleException.InvalidHeader(
+                            String.format("Invalid count number %d for fixed count in header line with ID %s. For fixed count, the count number must be 1 or higher.",
+                                    lineCount,
+                                    getID()));
+                }
         }
         return lineCount;
     }
@@ -375,7 +380,7 @@ public abstract class VCFCompoundHeaderLine extends VCFStructuredHeaderLine {
                 getID().equals(other.getID());
     }
 
-    // TODO: from merge: do we still need thse ?
+    // Merge TODO: from merge: do we still need these ?
 //
 //    /**
 //     * Specify annotation source

@@ -1,9 +1,10 @@
 package htsjdk.utils;
 
+import htsjdk.HtsjdkTest;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-public class UtilsUnitTest {
+public class UtilsUnitTest extends HtsjdkTest {
     @Test(expectedExceptions = IllegalArgumentException.class)
     public void testNonNullThrows(){
         final Object o = null;

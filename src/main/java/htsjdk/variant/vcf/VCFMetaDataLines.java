@@ -55,8 +55,8 @@ class VCFMetaDataLines implements Serializable {
             final String message = String.format(
                     "Attempt to add header line (%s) collides with existing line header line (%s). " +
                             "The existing line will be retained",
-                    mMetaData.get(key),
-                    headerLine);
+                    headerLine,
+                    mMetaData.get(key));
             //TODO: should this also detect/reject multiple "assembly" or "reference" lines ?
             if (VCFHeaderVersion.isFormatString(headerLine.getKey())) { // Throw if there is more than one fileformat line
                 throw new TribbleException(message);

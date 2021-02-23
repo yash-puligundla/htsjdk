@@ -1,6 +1,7 @@
 package htsjdk.variant.vcf;
 
 import htsjdk.HtsjdkTest;
+import htsjdk.tribble.TribbleException;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -43,7 +44,7 @@ public class VCFUtilsTest extends HtsjdkTest {
         final Set<VCFHeaderLine> resultHeaders = VCFUtils.smartMergeHeaders(headersToMerge, true);
     }
 
-    @Test(dataProvider="invalidHeaderVersionMerger", expectedExceptions = IllegalArgumentException.class)
+    @Test(dataProvider="invalidHeaderVersionMerger", expectedExceptions = TribbleException.class)
     public void testInvalidHeaderVersionMerger(final List<String> headerVersions) {
         final List<VCFHeader> headersToMerge = new ArrayList<>(headerVersions.size());
         headerVersions.forEach(hv -> headersToMerge.add(

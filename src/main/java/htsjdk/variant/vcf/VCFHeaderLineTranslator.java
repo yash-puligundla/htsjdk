@@ -169,7 +169,8 @@ class VCF4Parser implements VCFLineParser {
                 if (index >= expectedTagOrder.size()) {
                     break; // done - end of requiredTagOrder list
                 } else if (!expectedTagOrder.get(index).equals(str)) {
-                    throw new TribbleException.InvalidHeader("Unexpected tag or tag order" + str + " in line " + valueLine);
+                    throw new TribbleException.InvalidHeader(
+                            String.format("Unexpected tag or tag order for tag \"%s\" in line %s", str, valueLine));
                 }
                 index++;
             }

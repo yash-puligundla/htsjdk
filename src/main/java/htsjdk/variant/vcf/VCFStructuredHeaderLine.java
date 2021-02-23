@@ -183,10 +183,12 @@ public class VCFStructuredHeaderLine extends VCFHeaderLine {
      * @return boolean indicating whether the value should be embedded in quotes during serialization
      */
     protected boolean getIsQuotableAttribute(final String attributeName) {
-        // AFAICT, the spec only mentions that the DESCRIPTION attribute for info lines should be quoted,
-        // but the previous incarnations of htsjdk seem to do it for all DESCRIPTION attributes, so
-        // retain this for BWC
-        return attributeName.equals(DESCRIPTION_ATTRIBUTE);
+        // AFAICT, the (VF4.3) spec says that the DESCRIPTION, SOURCE, and VERSION attributes
+        // for INFO/FORMAT lines should be quoted, but  previous incarnations of htsjdk seem to
+        // do it for all header line String attributes ?
+        return attributeName.equals(DESCRIPTION_ATTRIBUTE) ||
+                attributeName.equals(SOURCE_ATTRIBUTE) ||
+                attributeName.equals(VERSION_ATTRIBUTE);
     }
 
     private static String escapeQuotes(final String value) {

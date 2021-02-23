@@ -456,6 +456,7 @@ public class VCFHeader implements Serializable {
 
     // TODO: Is it useful to retain this method ? It returns the first match for the given key. Should we
     // deprecate it (and add a new one that returns a Collection) or just change it to return a Collection ?
+    // TODO: how does this find lines with the key OTHER:key
     /**
      * Get the VCFHeaderLine whose key equals key.  Returns null if no such line exists
      * @param key
@@ -621,6 +622,7 @@ public class VCFHeader implements Serializable {
 
         for ( final VCFHeader source : headers ) {
             validateAllowedVersionMerger(vcfVersions, source.getVCFHeaderVersion());
+            vcfVersions.add(source.getVCFHeaderVersion());
             for ( final VCFHeaderLine line : source.getMetaDataInSortedOrder()) {
 
                 String key = line.getKey();
@@ -700,6 +702,8 @@ public class VCFHeader implements Serializable {
                     .map(v -> v.getVersionString())
                     .collect(Collectors.joining(","))
             );
+            //TODO: this is TribbleException to maintain compatibility with existing code and tests, but
+            // should it be IllegalArgumentException or something else ?
             throw new TribbleException(sb.toString());
         }
     }

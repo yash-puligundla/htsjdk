@@ -46,8 +46,7 @@ public class VCFContigHeaderLine extends VCFStructuredHeaderLine {
     private static final long serialVersionUID = 1L;
     protected final static Log logger = Log.getInstance(VCFContigHeaderLine.class);
 
-    final static Pattern VALID_CONTIG_ID_PATTERN = Pattern.compile("[!-)+-<>-~][!-~]*");
-
+    final static Pattern VALID_CONTIG_ID_PATTERN = Pattern.compile("[0-9A-Za-z!#$%&+./:;?@^_|~-][0-9A-Za-z!#$%&*+./:;=?@^_|~-]*");
     final Integer contigIndex;
 
     public static String LENGTH_ATTRIBUTE = "length";
@@ -175,7 +174,7 @@ public class VCFContigHeaderLine extends VCFStructuredHeaderLine {
         if (vcfTargetVersion.isAtLeastAsRecentAs(VCFHeaderVersion.VCF4_3)) {
             //TODO: V4.3 The contig names must not use a reserved symbolic allele/exclude the characters
             // l/r chevron, l/r bracket, colon, asterisk
-            if (VALID_CONTIG_ID_PATTERN.matcher(getID()).matches()) {
+            if (!VALID_CONTIG_ID_PATTERN.matcher(getID()).matches()) {
                 String message = String.format("Contig headerLineID \"%s\" in \"%s\" header line doesn't conform to VCF contig ID restrictions" ,
                         getID(),
                         getKey());

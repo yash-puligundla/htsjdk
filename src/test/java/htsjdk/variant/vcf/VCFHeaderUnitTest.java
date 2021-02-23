@@ -552,22 +552,10 @@ public class VCFHeaderUnitTest extends VariantBaseTest {
     @DataProvider(name = "conflictingHeaderVersionPairs")
     public Object[][] vcfConflictingVersionLines() {
         return new Object[][]{
-                {VCFHeaderVersion.VCF4_0, VCFHeaderVersion.VCF3_2},
-                {VCFHeaderVersion.VCF4_0, VCFHeaderVersion.VCF3_3},
-                {VCFHeaderVersion.VCF4_0, VCFHeaderVersion.VCF4_1},
-                {VCFHeaderVersion.VCF4_0, VCFHeaderVersion.VCF4_2},
+                {VCFHeaderVersion.VCF3_2, VCFHeaderVersion.VCF4_3},
+                {VCFHeaderVersion.VCF3_3, VCFHeaderVersion.VCF4_3},
                 {VCFHeaderVersion.VCF4_0, VCFHeaderVersion.VCF4_3},
-
-                {VCFHeaderVersion.VCF4_1, VCFHeaderVersion.VCF3_2},
-                {VCFHeaderVersion.VCF4_1, VCFHeaderVersion.VCF3_3},
-                {VCFHeaderVersion.VCF4_1, VCFHeaderVersion.VCF4_0},
-                {VCFHeaderVersion.VCF4_1, VCFHeaderVersion.VCF4_2},
                 {VCFHeaderVersion.VCF4_1, VCFHeaderVersion.VCF4_3},
-
-                {VCFHeaderVersion.VCF4_2, VCFHeaderVersion.VCF3_2},
-                {VCFHeaderVersion.VCF4_2, VCFHeaderVersion.VCF3_3},
-                {VCFHeaderVersion.VCF4_2, VCFHeaderVersion.VCF4_0},
-                {VCFHeaderVersion.VCF4_2, VCFHeaderVersion.VCF4_1},
                 {VCFHeaderVersion.VCF4_2, VCFHeaderVersion.VCF4_3},
 
                 {VCFHeaderVersion.VCF4_3, VCFHeaderVersion.VCF3_2},
@@ -663,7 +651,7 @@ public class VCFHeaderUnitTest extends VariantBaseTest {
         Assert.assertNull(allContigLines.get(0).getGenericFieldValue("assembly"));
     }
 
-    @Test(dataProvider = "conflictingHeaderVersionPairs")
+    @Test(dataProvider = "conflictingHeaderVersionPairs", expectedExceptions = TribbleException.class)
     public void test_MergeHeadersAcrossVersions(
             final VCFHeaderVersion vcfVersion,
             final VCFHeaderVersion conflictingVersion)

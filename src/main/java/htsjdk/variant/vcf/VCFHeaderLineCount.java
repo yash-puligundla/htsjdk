@@ -38,6 +38,7 @@ public enum VCFHeaderLineCount {
     // actual count is derived and not a fixed integer (i.e., when isFixedCount()==false)
     public static final int VARIABLE_COUNT = -1;
 
+    //TODO: this needs javadoc
     public boolean isFixedCount() { return this.equals(INTEGER); }
 
     /**

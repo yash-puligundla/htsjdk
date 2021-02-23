@@ -142,16 +142,16 @@ public class VCFHeaderLineUnitTest extends VariantBaseTest {
         headerLine.validateForVersion(incompatibleVersion);
     }
 
-    @Test(expectedExceptions = { IllegalArgumentException.class }, expectedExceptionsMessageRegExp = "Invalid count number, with fixed count the number should be 1 or higher: .*")
-    public void testFormatNumberExeptions() {
+    @Test(expectedExceptions = { TribbleException.InvalidHeader.class }, expectedExceptionsMessageRegExp = ".*For fixed count, the count number must be 1 or higher.")
+    public void testFormatNumberExceptions() {
         new VCFFormatHeaderLine("test",
                 0,
                 VCFHeaderLineType.Integer,
                 "");
     }
 
-    @Test(expectedExceptions = { IllegalArgumentException.class }, expectedExceptionsMessageRegExp = "Invalid count number, with fixed count the number should be 1 or higher: .*")
-    public void testInfoNumberExeptions() {
+    @Test(expectedExceptions = { TribbleException.InvalidHeader.class }, expectedExceptionsMessageRegExp = ".*For fixed count, the count number must be 1 or higher.")
+    public void testInfoNumberExceptions() {
         new VCFInfoHeaderLine("test",
                 0,
                 VCFHeaderLineType.Integer,

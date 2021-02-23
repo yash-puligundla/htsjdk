@@ -152,20 +152,19 @@ public abstract class AbstractVCFCodec extends AsciiFeatureCodec<VariantContext>
         // TODO: Optimization: There is no reason we couldn't just parse the header lines right here
         // instead of accumulating them in a list and then making another pass to convert them
         while (lineIterator.hasNext()) {
-            final String line = lineIterator.next();
-            if (line.startsWith(VCFHeader.HEADER_INDICATOR)) {
+            final String line = lineIterator.peek();
+            if (line.startsWith(VCFHeader.METADATA_INDICATOR)) {
                 lineNo++;
-                headerStrings.add(line);
-                if (!line.startsWith(VCFHeader.METADATA_INDICATOR)) {
-                    this.header = parseHeaderFromLines(headerStrings, fileFormatVersion);
-                    break;
-                }
-            } else {
-                throw new TribbleException.InvalidHeader(
-                        "The required header line (starting with one #) is missing in the input VCF file");
+                headerStrings.add(lineIterator.next());
+            } else if (line.startsWith(VCFHeader.HEADER_INDICATOR)) {
+                lineNo++;
+                headerStrings.add(lineIterator.next());
+                this.header = parseHeaderFromLines(headerStrings, fileFormatVersion);
+                return this.header;
             }
         }
-        return this.header;
+        throw new TribbleException.InvalidHeader(
+                "The required header line (starting with one #) is missing in the input VCF file");
     }
 
     /**
@@ -235,11 +234,7 @@ public abstract class AbstractVCFCodec extends AsciiFeatureCodec<VariantContext>
             }
         }
 
-        this.header = new VCFHeader(sourceVersion, metaData, sampleNames);
-
-        if ( doOnTheFlyModifications ) {
-            this.header = VCFStandardHeaderLines.repairStandardHeaderLines(this.header);
-        }
+        setVCFHeader(new VCFHeader(version, metaData, sampleNames), version);
         return this.header;
     }
 
@@ -307,9 +302,16 @@ public abstract class AbstractVCFCodec extends AsciiFeatureCodec<VariantContext>
      * @param sourceVersion the VCF header version derived from which the source was retrieved. The resulting header
      *                      line object should be validate for this header version.
      * @return a VCFPedigreeHeaderLine object
+     *
+     * NOTE:this can't return a VCFPedigreeHeaderLine since for pre-v4.3 PEDIGREE lines must be modeled as
+     * VCFHeaderLine due to the lack of a requirement for an ID field
      */
-    public VCFPedigreeHeaderLine getPedigreeHeaderLine(final String headerLineString, final VCFHeaderVersion sourceVersion) {
-        return new VCFPedigreeHeaderLine(headerLineString, sourceVersion);
+    public VCFHeaderLine getPedigreeHeaderLine(final String headerLineString, final VCFHeaderVersion sourceVersion) {
+        if (sourceVersion.isAtLeastAsRecentAs(VCFHeaderVersion.VCF4_3)) {
+            return new VCFPedigreeHeaderLine(headerLineString, sourceVersion);
+        } else {
+            return new VCFHeaderLine(PEDIGREE_HEADER_KEY, headerLineString);
+        }
     }
 
     /**
@@ -338,10 +340,10 @@ public abstract class AbstractVCFCodec extends AsciiFeatureCodec<VariantContext>
      * Create and return a basic VCFHeaderLine.
      *
      * @param headerLineString VCF header line being parsed without the leading "##"
-     * @param targetVersion VCFHeaderVersion being parsed
+     * @param sourceVersion VCFHeaderVersion being parsed
      * @return a VCFHeaderLine
      */
-    public VCFHeaderLine getOtherHeaderLine(final String headerLineString, final VCFHeaderVersion targetVersion) {
+    public VCFHeaderLine getOtherHeaderLine(final String headerLineString, final VCFHeaderVersion sourceVersion) {
         final int indexOfEquals = headerLineString.indexOf('=');
         if ( indexOfEquals < 3 ) { // must at least have "##?="
             // TODO: NOTE: the old code silently dropped metadata lines with no "="; now we log, or throw for verbose logging
@@ -349,6 +351,7 @@ public abstract class AbstractVCFCodec extends AsciiFeatureCodec<VariantContext>
                 throw new TribbleException.InvalidHeader("Unrecognized metadata line type: " + headerLineString);
             }
             if (VCFUtils.getVerboseVCFLogging()) {
+                // TODO: should this throw
                 logger.warn("Dropping unrecognized metadata line type: " + headerLineString);
             }
             return null;
@@ -358,7 +361,7 @@ public abstract class AbstractVCFCodec extends AsciiFeatureCodec<VariantContext>
                 return new VCFStructuredHeaderLine(
                         headerLineString.substring(0, indexOfEquals),
                         headerLineString.substring(indexOfEquals + 1),
-                        targetVersion);
+                        sourceVersion);
             } else {
                 return new VCFHeaderLine(headerLineString.substring(0, indexOfEquals), headerLineString.substring(indexOfEquals + 1));
             }

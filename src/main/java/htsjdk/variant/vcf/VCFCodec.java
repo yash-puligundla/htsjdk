@@ -88,7 +88,8 @@ public class VCFCodec extends AbstractVCFCodec {
     public boolean canDecodeVersion(final VCFHeaderVersion targetHeaderVersion) {
         return targetHeaderVersion == VCFHeaderVersion.VCF4_0 ||
                 targetHeaderVersion == VCFHeaderVersion.VCF4_1 ||
-                targetHeaderVersion == VCFHeaderVersion.VCF4_2;
+                targetHeaderVersion == VCFHeaderVersion.VCF4_2 ||
+                targetHeaderVersion == VCFHeaderVersion.VCF4_3;
     }
 
     @Override

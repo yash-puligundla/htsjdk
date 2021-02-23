@@ -114,9 +114,11 @@ public class VCFCompoundHeaderLineUnitTest extends VariantBaseTest {
         new VCFInfoHeaderLine("<ID=FOO,Number=-1,Type=Integer,Description=\"foo\">", VCFHeader.DEFAULT_VCF_VERSION);
     }
 
-    @Test(expectedExceptions=TribbleException.class)
-    public void testRejectFlagTypeWithNegativeCount() {
-        new VCFInfoHeaderLine("<ID=FOO,Number=-1,Type=Flag,Description=\"foo\">", VCFHeader.DEFAULT_VCF_VERSION);
+    @Test
+    public void testRepairFlagTypeWithNegativeCount() {
+        final VCFInfoHeaderLine infoLine = new VCFInfoHeaderLine("<ID=FOO,Number=-1,Type=Flag,Description=\"foo\">",
+                VCFHeader.DEFAULT_VCF_VERSION);
+        Assert.assertEquals(infoLine.getCount(), 0);
     }
 
     @DataProvider (name = "equalsData")

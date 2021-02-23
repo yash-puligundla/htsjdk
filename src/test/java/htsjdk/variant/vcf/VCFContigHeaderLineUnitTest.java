@@ -1,5 +1,6 @@
 package htsjdk.variant.vcf;
 
+import htsjdk.HtsjdkTest;
 import htsjdk.samtools.SAMSequenceRecord;
 import htsjdk.tribble.TribbleException;
 import org.testng.Assert;
@@ -11,7 +12,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.TreeSet;
 
-public class VCFContigHeaderLineUnitTest {
+public class VCFContigHeaderLineUnitTest extends HtsjdkTest {
 
     @DataProvider(name = "allowedIDs")
     public Object[][] getAllowedIDs() {

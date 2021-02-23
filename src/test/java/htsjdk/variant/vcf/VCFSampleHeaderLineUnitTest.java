@@ -1,11 +1,12 @@
 package htsjdk.variant.vcf;
 
+import htsjdk.HtsjdkTest;
 import htsjdk.tribble.TribbleException;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-public class VCFSampleHeaderLineUnitTest {
+public class VCFSampleHeaderLineUnitTest extends HtsjdkTest {
 
     @DataProvider(name = "allowedVCFVersions")
     public Object[][] allowedVCFVersions() {

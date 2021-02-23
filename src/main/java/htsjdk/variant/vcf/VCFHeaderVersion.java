@@ -127,15 +127,15 @@ public enum VCFHeaderVersion {
     }
 
     /**
-     * Determine if twoheader versions are compatible. For now, the only incompatibility is between V4.3
+     * Determine if two header versions are compatible. For now, the only incompatibility is between V4.3
      * and any other version. All other versions are compatible.
      * @param v1
      * @param v2
      * @return
      */
     public static boolean versionsAreCompatible(final VCFHeaderVersion v1, final VCFHeaderVersion v2) {
-        return !v1.equals(v2) &&
-                (v1.isAtLeastAsRecentAs(VCF4_3) || v2.isAtLeastAsRecentAs(VCF4_3));
+        return v1.equals(v2) ||
+                (!v1.isAtLeastAsRecentAs(VCF4_3) && !v2.isAtLeastAsRecentAs(VCF4_3));
     }
 
     public String getVersionString() {

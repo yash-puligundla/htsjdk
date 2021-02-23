@@ -1,12 +1,13 @@
 package htsjdk.variant.vcf;
 
+import htsjdk.HtsjdkTest;
 import htsjdk.tribble.TribbleException;
 import org.testng.annotations.Test;
 
 /**
  * Test conditions that are unique to FORMAT lines (not covered by VCFCompoundHeaderLineUnitTest).
  */
-public class VCFFormatHeaderLineUnitTest {
+public class VCFFormatHeaderLineUnitTest extends HtsjdkTest {
 
     // FORMAT lines aren't allowed to have type==Flag
     @Test(expectedExceptions=TribbleException.class)

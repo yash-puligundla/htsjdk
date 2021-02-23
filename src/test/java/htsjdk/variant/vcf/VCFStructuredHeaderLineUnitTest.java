@@ -1,5 +1,6 @@
 package htsjdk.variant.vcf;
 
+import htsjdk.HtsjdkTest;
 import htsjdk.tribble.TribbleException;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
@@ -10,7 +11,7 @@ import java.util.LinkedHashMap;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
-public class VCFStructuredHeaderLineUnitTest {
+public class VCFStructuredHeaderLineUnitTest extends HtsjdkTest {
 
     private VCFStructuredHeaderLine getStructuredHeaderLine() {
         return new VCFStructuredHeaderLine(
