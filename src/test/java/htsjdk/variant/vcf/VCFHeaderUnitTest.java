@@ -983,11 +983,10 @@ public class VCFHeaderUnitTest extends VariantBaseTest {
 
     private void checkMD5ofHeaderFile(VCFHeader header, String md5sum) {
         File myTempFile = null;
-        PrintWriter pw = null;
         try {
             myTempFile = File.createTempFile("VCFHeader", "vcf");
             myTempFile.deleteOnExit();
-            pw = new PrintWriter(myTempFile);
+            new PrintWriter(myTempFile);
         } catch (IOException e) {
             Assert.fail("Unable to make a temp file!");
         }
