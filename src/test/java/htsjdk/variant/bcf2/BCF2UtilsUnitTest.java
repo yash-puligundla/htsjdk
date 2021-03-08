@@ -176,7 +176,7 @@ public final class BCF2UtilsUnitTest extends VariantBaseTest {
     private static boolean expectedConsistent(final VCFHeader combinationHeader, final int minCounterForInputLines) {
         final List<Integer> ids = new ArrayList<Integer>();
         for ( final VCFHeaderLine line : combinationHeader.getMetaDataInInputOrder() ) {
-            if ( line.isStructuredHeaderLine()) {
+            if ( line.isIDHeaderLine()) {
                 ids.add(Integer.valueOf(line.getID()));
             }
         }

@@ -90,7 +90,7 @@ class VCFMetaDataLines implements Serializable {
      * @return
      */
     private String makeKeyForLine(final VCFHeaderLine headerLine) {
-        if (headerLine.isStructuredHeaderLine()) { // required to have a unique ID
+        if (headerLine.isIDHeaderLine()) { // required to have a unique ID
             // use the line type as the namespace, to ensure unique key/id combination
             return makeKey(headerLine.getKey(), headerLine.getID());
         } else {
@@ -167,9 +167,12 @@ class VCFMetaDataLines implements Serializable {
     /**
      * @return all of the structured (ID) lines in their original file order, or an empty list if none were present
      */
-    public List<VCFHeaderLine> getStructuredHeaderLines() {
+    //TODO: does this correctly retain order ?
+    //TODO: does this return Contig header lines ? did it do so previously ?
+    public List<VCFSimpleHeaderLine> getIDHeaderLines() {
         return mMetaData.values().stream()
-                .filter(hl -> hl.isStructuredHeaderLine())
+                .filter(hl -> hl.isIDHeaderLine())
+                .map(hl -> (VCFSimpleHeaderLine) hl)
                 .collect(Collectors.toCollection(ArrayList::new));
     }
 

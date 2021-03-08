@@ -75,7 +75,7 @@ public class VCFHeaderLine implements Comparable, Serializable {
     /**
      * @return true if this is a structured header line (has a unique ID and key/value pairs), otherwise false
      */
-    public boolean isStructuredHeaderLine() { return false; }
+    public boolean isIDHeaderLine() { return false; }
 
     /**
      * Return the unique ID for this line. Returns null iff isStructuredHeaderLine is false.

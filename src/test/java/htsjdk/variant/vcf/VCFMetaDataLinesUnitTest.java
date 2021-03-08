@@ -94,7 +94,7 @@ public class VCFMetaDataLinesUnitTest extends HtsjdkTest {
         VCFMetaDataLines md = unitTestData.getFullMetaDataLines();
 
         int beforeAllSize = md.getMetaDataInInputOrder().size();
-        int beforeStructuredSize = md.getStructuredHeaderLines().size();
+        int beforeStructuredSize = md.getIDHeaderLines().size();
         int beforeOtherSize = md.getOtherHeaderLines().size();
 
         VCFHeaderLine newLine = new VCFHeaderLine("foo", "bar");
@@ -102,13 +102,13 @@ public class VCFMetaDataLinesUnitTest extends HtsjdkTest {
         // add one other line
         md.addMetaDataLine(newLine);
         Assert.assertEquals(md.getMetaDataInInputOrder().size(), beforeAllSize + 1);
-        Assert.assertEquals(md.getStructuredHeaderLines().size(), beforeStructuredSize);  // remains the same
+        Assert.assertEquals(md.getIDHeaderLines().size(), beforeStructuredSize);  // remains the same
         Assert.assertEquals(md.getOtherHeaderLines().size(), beforeOtherSize + 1);
 
         // remove the other line and we're back to original size
         Assert.assertEquals(md.removeHeaderLine(newLine), newLine);
         Assert.assertEquals(md.getMetaDataInInputOrder().size(), beforeAllSize);
-        Assert.assertEquals(md.getStructuredHeaderLines().size(), beforeStructuredSize);  // still remains the same
+        Assert.assertEquals(md.getIDHeaderLines().size(), beforeStructuredSize);  // still remains the same
         Assert.assertEquals(md.getOtherHeaderLines().size(), beforeOtherSize);
     }
 
@@ -118,7 +118,7 @@ public class VCFMetaDataLinesUnitTest extends HtsjdkTest {
         VCFMetaDataLines md = unitTestData.getFullMetaDataLines();
 
         int beforeAllSize = md.getMetaDataInInputOrder().size();
-        int beforeStructuredSize = md.getStructuredHeaderLines().size();
+        int beforeStructuredSize = md.getIDHeaderLines().size();
         int beforeFilterSize = md.getFilterLines().size();
         int beforeOtherSize = md.getOtherHeaderLines().size();
 
@@ -127,14 +127,14 @@ public class VCFMetaDataLinesUnitTest extends HtsjdkTest {
         // add one structured line
         md.addMetaDataLine(newLine);
         Assert.assertEquals(md.getMetaDataInInputOrder().size(), beforeAllSize + 1);
-        Assert.assertEquals(md.getStructuredHeaderLines().size(), beforeStructuredSize + 1);
+        Assert.assertEquals(md.getIDHeaderLines().size(), beforeStructuredSize + 1);
         Assert.assertEquals(md.getFilterLines().size(), beforeFilterSize + 1);
         Assert.assertEquals(md.getOtherHeaderLines().size(), beforeOtherSize); // remains the same
 
         // remove the new line and we're back to original size
         Assert.assertEquals(md.removeHeaderLine(newLine), newLine);
         Assert.assertEquals(md.getMetaDataInInputOrder().size(), beforeAllSize);
-        Assert.assertEquals(md.getStructuredHeaderLines().size(), beforeStructuredSize);
+        Assert.assertEquals(md.getIDHeaderLines().size(), beforeStructuredSize);
         Assert.assertEquals(md.getFilterLines().size(), beforeFilterSize);
         Assert.assertEquals(md.getOtherHeaderLines().size(), beforeOtherSize); // still remains the same
     }
@@ -145,7 +145,7 @@ public class VCFMetaDataLinesUnitTest extends HtsjdkTest {
         VCFMetaDataLines md = unitTestData.getFullMetaDataLines();
 
         int beforeAllSize = md.getMetaDataInInputOrder().size();
-        int beforeStructuredSize = md.getStructuredHeaderLines().size();
+        int beforeStructuredSize = md.getIDHeaderLines().size();
         int beforeFilterSize = md.getFilterLines().size();
 
         VCFFilterHeaderLine newLine = new VCFFilterHeaderLine("filterID", "unused desc");
@@ -153,20 +153,20 @@ public class VCFMetaDataLinesUnitTest extends HtsjdkTest {
         // add one structured (filter) line
         md.addMetaDataLine(newLine);
         Assert.assertEquals(md.getMetaDataInInputOrder().size(), beforeAllSize + 1);
-        Assert.assertEquals(md.getStructuredHeaderLines().size(), beforeStructuredSize + 1);
+        Assert.assertEquals(md.getIDHeaderLines().size(), beforeStructuredSize + 1);
         Assert.assertEquals(md.getFilterLines().size(), beforeFilterSize + 1);
 
         // add the same structured line again, second is rejected, count remains the same
         md.addMetaDataLine(newLine);
         Assert.assertEquals(md.getMetaDataInInputOrder().size(), beforeAllSize + 1);
-        Assert.assertEquals(md.getStructuredHeaderLines().size(), beforeStructuredSize + 1);
+        Assert.assertEquals(md.getIDHeaderLines().size(), beforeStructuredSize + 1);
         Assert.assertEquals(md.getFilterLines().size(), beforeFilterSize + 1);
         Assert.assertEquals(md.getFilterHeaderLine("filterID"), newLine);
 
         // remove the first structured line and we're back to the original size
         Assert.assertEquals(md.removeHeaderLine(newLine), newLine);
         Assert.assertEquals(md.getMetaDataInInputOrder().size(), beforeAllSize);
-        Assert.assertEquals(md.getStructuredHeaderLines().size(), beforeStructuredSize);
+        Assert.assertEquals(md.getIDHeaderLines().size(), beforeStructuredSize);
         Assert.assertEquals(md.getFilterLines().size(), beforeFilterSize);
     }
 

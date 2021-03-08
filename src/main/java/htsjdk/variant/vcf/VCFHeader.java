@@ -31,7 +31,6 @@ import htsjdk.tribble.TribbleException;
 import htsjdk.tribble.util.ParsingUtils;
 import htsjdk.utils.Utils;
 import htsjdk.utils.ValidationUtils;
-import htsjdk.variant.utils.GeneralUtils;
 import htsjdk.variant.variantcontext.VariantContextComparator;
 
 import java.io.Serializable;
@@ -406,7 +405,8 @@ public class VCFHeader implements Serializable {
     /**
      * @return all of the VCF ID lines in their original file order, or an empty list if none were present
      */
-    public List<VCFHeaderLine> getStructuredHeaderLines() { return mMetaData.getStructuredHeaderLines(); }
+    //TODO: Note that this returns VCFSimpleHeaderLine instead of VCFIDHeaderLine, since thats more useful
+    public List<VCFSimpleHeaderLine> getIDHeaderLines() { return mMetaData.getIDHeaderLines(); }
 
     /**
      * Check for the presence of a format line with the deprecated key {@link VCFConstants#GENOTYPE_LIKELIHOODS_KEY}.

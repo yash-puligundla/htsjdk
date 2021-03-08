@@ -46,7 +46,7 @@ public class VCFHeaderLineUnitTest extends VariantBaseTest {
     @Test
     public void testIsNotStructuredHeaderLine() {
         VCFHeaderLine hl = new VCFHeaderLine("key", "value");
-        Assert.assertFalse(hl.isStructuredHeaderLine());
+        Assert.assertFalse(hl.isIDHeaderLine());
         Assert.assertNull(hl.getID());
     }
 

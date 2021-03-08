@@ -27,9 +27,7 @@ package htsjdk.variant.vcf;
 
 import htsjdk.samtools.SAMSequenceDictionary;
 import htsjdk.samtools.SAMSequenceRecord;
-import htsjdk.tribble.TribbleException;
 import htsjdk.samtools.util.FileExtensions;
-import htsjdk.variant.utils.GeneralUtils;
 import htsjdk.variant.variantcontext.VariantContext;
 import htsjdk.variant.variantcontext.writer.Options;
 import htsjdk.variant.variantcontext.writer.VariantContextWriter;
@@ -104,7 +102,7 @@ public class VCFUtils {
         final Set<VCFHeaderLine> lines = new LinkedHashSet<>(oldLines.size());
 
         for ( final VCFHeaderLine line : oldLines ) {
-            if ( line.isStructuredHeaderLine() && line.getKey().equals(VCFConstants.CONTIG_HEADER_KEY) )
+            if ( line.isIDHeaderLine() && line.getKey().equals(VCFConstants.CONTIG_HEADER_KEY) )
                 continue; // skip old contig lines
             if (line.getKey().equals(VCFHeader.REFERENCE_KEY))
                 continue; // skip the old reference key

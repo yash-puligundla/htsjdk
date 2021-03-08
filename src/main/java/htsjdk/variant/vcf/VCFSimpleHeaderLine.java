@@ -123,7 +123,7 @@ public class VCFSimpleHeaderLine extends VCFHeaderLine implements VCFIDHeaderLin
      * otherwise false
      */
     @Override
-    public boolean isStructuredHeaderLine() { return true; }
+    public boolean isIDHeaderLine() { return true; }
 
     /**
      * Return the unique ID for this line. Returns null iff isStructuredHeaderLine is false.

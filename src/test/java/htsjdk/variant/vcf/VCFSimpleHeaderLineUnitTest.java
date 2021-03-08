@@ -97,7 +97,7 @@ public class VCFSimpleHeaderLineUnitTest extends HtsjdkTest {
 
     @Test
     public void testIsStructuredHeaderLine() {
-        Assert.assertTrue(getStructuredHeaderLine().isStructuredHeaderLine());
+        Assert.assertTrue(getStructuredHeaderLine().isIDHeaderLine());
     }
 
     @Test

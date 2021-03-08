@@ -309,8 +309,8 @@ public final class BCF2Utils {
         if ( ! nullAsEmpty(outputHeader.getSampleNamesInOrder()).equals(nullAsEmpty(genotypesBlockHeader.getSampleNamesInOrder())) )
             return false;
 
-        final Iterator<? extends VCFHeaderLine> outputLinesIt = outputHeader.getStructuredHeaderLines().iterator();
-        final Iterator<? extends VCFHeaderLine> inputLinesIt = genotypesBlockHeader.getStructuredHeaderLines().iterator();
+        final Iterator<? extends VCFHeaderLine> outputLinesIt = outputHeader.getIDHeaderLines().iterator();
+        final Iterator<? extends VCFHeaderLine> inputLinesIt = genotypesBlockHeader.getIDHeaderLines().iterator();
 
         while ( inputLinesIt.hasNext() ) {
             if ( ! outputLinesIt.hasNext() ) // missing lines in output
