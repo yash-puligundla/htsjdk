@@ -234,6 +234,7 @@ public class BCF2Codec extends BinaryFeatureCodec<VariantContext> {
         // First, the version check is too permissive - it accepts any minor version, including BCF 2.2,
         // which it shouldn't. Second, it doesn't recognize that BCF can be block gzipped, so it rejects
         // those files because the header never matches, but only because the stream isn't decompressed.
+        // TODO: call validateVersionCompatibility here instead to remedy #1 above
         try (InputStream fis = Files.newInputStream(IOUtil.getPath(path)) ){
             final BCFVersion version = BCFVersion.readBCFVersion(fis);
             return version != null && version.getMajorVersion() == ALLOWED_MAJOR_VERSION;

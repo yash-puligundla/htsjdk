@@ -73,9 +73,6 @@ public abstract class VCFCompoundHeaderLine extends VCFStructuredHeaderLine {
     private final VCFHeaderLineType type;
     private final VCFHeaderLineCount countType;
     private final int count;
-    //TODO: from merge: do we still need these ?
-    private String source;
-    private String version;
 
     /**
      * create a VCF compound header line with count type = VCFHeaderLineCount.INTEGER
@@ -155,14 +152,13 @@ public abstract class VCFCompoundHeaderLine extends VCFStructuredHeaderLine {
         return count;
     }
 
-    //TODO: from merge: do we still need these ?
-//    public String getSource() {
-//        return source;
-//    }
-//
-//    public String getVersion() {
-//        return version;
-//    }
+    public String getSource() {
+        return getGenericFieldValue(SOURCE_ATTRIBUTE);
+    }
+
+    public String getVersion() {
+        return getGenericFieldValue(VERSION_ATTRIBUTE);
+    }
 
     private VCFHeaderLineType decodeLineType(final String lineTypeString) {
         if (lineTypeString == null) {
@@ -380,27 +376,26 @@ public abstract class VCFCompoundHeaderLine extends VCFStructuredHeaderLine {
                 getID().equals(other.getID());
     }
 
-    // Merge TODO: from merge: do we still need these ?
-//
-//    /**
-//     * Specify annotation source
-//     * <p>
-//     * This value is optional starting with VCFv4.2.
-//     *
-//     * @param source  annotation source (case-insensitive, e.g. "dbsnp")
-//     */
-//    public void setSource(final String source) {
-//        this.source = source;
-//    }
-//
-//    /**
-//     * Specify annotation version
-//     * <p>
-//     * This value is optional starting with VCFv4.2.
-//     *
-//     * @param version exact version (e.g. "138")
-//     */
-//    public void setVersion(final String version) {
-//        this.version = version;
-//    }
+
+    /**
+     * Specify annotation source
+     * <p>
+     * This value is optional starting with VCFv4.2.
+     *
+     * @param source  annotation source (case-insensitive, e.g. "dbsnp")
+     */
+    public void setSource(final String source) {
+        updateGenericField(SOURCE_ATTRIBUTE, source);
+    }
+
+    /**
+     * Specify annotation version
+     * <p>
+     * This value is optional starting with VCFv4.2.
+     *
+     * @param version exact version (e.g. "138")
+     */
+    public void setVersion(final String version) {
+        updateGenericField(VERSION_ATTRIBUTE, version);
+    }
 }

@@ -224,21 +224,22 @@ class VCFWriter extends IndexingVariantContextWriter {
     }
 
     /**
-     * Given a header and a target output version, see if the header's version is compatible with the
+     * Given a header and a requested target output version, see if the header's version is compatible with the
      * requested version.
      * @param header
-     * @param versionLine
+     * @param requestedVersionLine
      */
-    private static void validateHeaderVersion(final VCFHeader header, final String versionLine) {
+    private static void validateHeaderVersion(final VCFHeader header, final String requestedVersionLine) {
         Utils.nonNull(header);
-        Utils.nonNull(versionLine);
+        Utils.nonNull(requestedVersionLine);
 
-        final VCFHeaderVersion vcfVersion = header.getVCFHeaderVersion();
-        if (!vcfVersion.equals(VCFHeaderVersion.getHeaderVersion(versionLine))) {
+        final VCFHeaderVersion vcfCurrentVersion = header.getVCFHeaderVersion();
+        final VCFHeaderVersion vcfRequestedVersion = VCFHeaderVersion.getHeaderVersion(requestedVersionLine);
+        if (!vcfCurrentVersion.equals(vcfRequestedVersion)) {
             final String message = String.format("Attempt to write a version %s VCF header to a version %s VCF output",
-                    vcfVersion.getVersionString(),
-                    versionLine);
-            if (!VCFHeaderVersion.versionsAreCompatible(VCFHeaderVersion.getHeaderVersion(versionLine), vcfVersion)) {
+                    vcfRequestedVersion,
+                    vcfCurrentVersion.getVersionString());
+            if (!VCFHeaderVersion.versionsAreCompatible(VCFHeaderVersion.getHeaderVersion(requestedVersionLine), vcfCurrentVersion)) {
                 if (VCFUtils.getStrictVCFVersionValidation()) {
                     throw new TribbleException(message);
                 }
