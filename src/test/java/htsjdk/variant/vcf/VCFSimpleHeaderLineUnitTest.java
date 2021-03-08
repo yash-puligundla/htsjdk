@@ -11,10 +11,10 @@ import java.util.LinkedHashMap;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
-public class VCFStructuredHeaderLineUnitTest extends HtsjdkTest {
+public class VCFSimpleHeaderLineUnitTest extends HtsjdkTest {
 
-    private VCFStructuredHeaderLine getStructuredHeaderLine() {
-        return new VCFStructuredHeaderLine(
+    private VCFSimpleHeaderLine getStructuredHeaderLine() {
+        return new VCFSimpleHeaderLine(
                 "key",
                 new LinkedHashMap<String, String>() {{
                     put("ID", "id");
@@ -26,16 +26,16 @@ public class VCFStructuredHeaderLineUnitTest extends HtsjdkTest {
 
     @Test
     public void testConstructorFromStrings() {
-        VCFStructuredHeaderLine hl = new VCFStructuredHeaderLine("testKey", "testId", "test description");
+        VCFSimpleHeaderLine hl = new VCFSimpleHeaderLine("testKey", "testId", "test description");
         Assert.assertEquals("testKey", hl.getKey());
         Assert.assertEquals("testId", hl.getID());
-        Assert.assertEquals("test description", hl.getGenericFieldValue(VCFStructuredHeaderLine.DESCRIPTION_ATTRIBUTE));
+        Assert.assertEquals("test description", hl.getGenericFieldValue(VCFSimpleHeaderLine.DESCRIPTION_ATTRIBUTE));
         Assert.assertEquals("testKey=<ID=testId,Description=\"test description\">", hl.toStringEncoding());
     }
 
     @Test
     public void testConstructorFromEncodedLine() {
-        VCFStructuredHeaderLine hLine = new VCFStructuredHeaderLine("key", "<ID=id,attr1=value1>", VCFHeader.DEFAULT_VCF_VERSION);
+        VCFSimpleHeaderLine hLine = new VCFSimpleHeaderLine("key", "<ID=id,attr1=value1>", VCFHeader.DEFAULT_VCF_VERSION);
         Assert.assertEquals(hLine.getKey(), "key");
         Assert.assertEquals(hLine.getID(), "id");
         Assert.assertEquals(hLine.getGenericFieldValue("ID"), "id");
@@ -44,7 +44,7 @@ public class VCFStructuredHeaderLineUnitTest extends HtsjdkTest {
 
     @Test
     public void testConstructorFromAttributeMap() {
-        VCFStructuredHeaderLine hLine = new VCFStructuredHeaderLine(
+        VCFSimpleHeaderLine hLine = new VCFSimpleHeaderLine(
                 "key",
                 new LinkedHashMap<String, String>() {{
                     put("ID", "id");
@@ -60,12 +60,12 @@ public class VCFStructuredHeaderLineUnitTest extends HtsjdkTest {
 
     @Test(expectedExceptions=TribbleException.class)
     public void testRejectIdMissingFromEncodedLine() {
-        new VCFStructuredHeaderLine("key", "<attr1=value1>", VCFHeader.DEFAULT_VCF_VERSION);
+        new VCFSimpleHeaderLine("key", "<attr1=value1>", VCFHeader.DEFAULT_VCF_VERSION);
     }
 
     @Test(expectedExceptions=TribbleException.class)
     public void testRejectIdMissingFromAttributeMap() {
-        new VCFStructuredHeaderLine(
+        new VCFSimpleHeaderLine(
                 "key",
                 new LinkedHashMap<String, String>() {{
                     put("attr1", "value1");
@@ -87,7 +87,7 @@ public class VCFStructuredHeaderLineUnitTest extends HtsjdkTest {
 
     @Test(dataProvider="violateIDRequirements",expectedExceptions=TribbleException.class)
     public void testViolateIDRequirements(final String headerLine) {
-        new VCFStructuredHeaderLine("key", headerLine, VCFHeader.DEFAULT_VCF_VERSION);
+        new VCFSimpleHeaderLine("key", headerLine, VCFHeader.DEFAULT_VCF_VERSION);
     }
 
     @Test
@@ -107,19 +107,19 @@ public class VCFStructuredHeaderLineUnitTest extends HtsjdkTest {
 
     @Test
     public void testStringEncoding() {
-        final VCFStructuredHeaderLine structuredHL = getStructuredHeaderLine();
+        final VCFSimpleHeaderLine structuredHL = getStructuredHeaderLine();
         Assert.assertEquals(structuredHL.toStringEncoding(),"key=<ID=id,attr1=value1,attr2=value2>");
     }
 
     @Test
     public void testUnescapedQuotedStringEncoding() {
-        VCFStructuredHeaderLine unescapedHeaderLine =  new VCFStructuredHeaderLine(
+        VCFSimpleHeaderLine unescapedHeaderLine =  new VCFSimpleHeaderLine(
                 "key",
                 new LinkedHashMap<String, String>() {{
                     put("ID", "id");
-                    put(VCFStructuredHeaderLine.DESCRIPTION_ATTRIBUTE,
+                    put(VCFSimpleHeaderLine.DESCRIPTION_ATTRIBUTE,
                             "filterName=[ANNOTATION] filterExpression=[ANNOTATION == \"NA\" || ANNOTATION <= 2.0]");
-                    put(VCFStructuredHeaderLine.SOURCE_ATTRIBUTE,
+                    put(VCFSimpleHeaderLine.SOURCE_ATTRIBUTE,
                             "filterName=[ANNOTATION] filterExpression=[ANNOTATION == \"NA\" || ANNOTATION <= 2.0]");
                 }}
         );
@@ -134,13 +134,13 @@ public class VCFStructuredHeaderLineUnitTest extends HtsjdkTest {
     @Test
     public void testEscapedQuotedStringEncoding() {
         // test Source and Version attributes
-        VCFStructuredHeaderLine unescapedHeaderLine =  new VCFStructuredHeaderLine(
+        VCFSimpleHeaderLine unescapedHeaderLine =  new VCFSimpleHeaderLine(
                 "key",
                 new LinkedHashMap<String, String>() {{
                     put("ID", "id");
-                    put(VCFStructuredHeaderLine.DESCRIPTION_ATTRIBUTE,
+                    put(VCFSimpleHeaderLine.DESCRIPTION_ATTRIBUTE,
                             "filterName=[ANNOTATION] filterExpression=[ANNOTATION == \\\"NA\\\" || ANNOTATION <= 2.0]");
-                    put(VCFStructuredHeaderLine.SOURCE_ATTRIBUTE,
+                    put(VCFSimpleHeaderLine.SOURCE_ATTRIBUTE,
                             "filterName=[ANNOTATION] filterExpression=[ANNOTATION == \\\"NA\\\" || ANNOTATION <= 2.0]");
                 }}
         );

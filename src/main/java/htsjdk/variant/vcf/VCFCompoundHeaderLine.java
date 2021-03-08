@@ -31,7 +31,6 @@ import htsjdk.utils.Utils;
 import htsjdk.variant.variantcontext.GenotypeLikelihoods;
 import htsjdk.variant.variantcontext.VariantContext;
 
-import java.util.*;
 import java.util.function.BiFunction;
 import java.util.regex.Pattern;
 
@@ -47,7 +46,7 @@ import java.util.Map;
  * Compound header lines are distinguished only in that are required to have TYPE and NUMBER attributes
  * (VCFHeaderLineCount, a VCFHeaderLineType, and a count).
  */
-public abstract class VCFCompoundHeaderLine extends VCFStructuredHeaderLine {
+public abstract class VCFCompoundHeaderLine extends VCFSimpleHeaderLine {
     private static final long serialVersionUID = 1L;
     protected static final Log logger = Log.getInstance(VCFCompoundHeaderLine.class);
 

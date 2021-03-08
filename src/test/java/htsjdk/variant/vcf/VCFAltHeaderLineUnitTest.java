@@ -32,7 +32,7 @@ public class VCFAltHeaderLineUnitTest extends HtsjdkTest {
     public void testAllowedVersions(final VCFHeaderVersion vcfAllowedVersion) {
         VCFAltHeaderLine vcfLine = new VCFAltHeaderLine(altString, vcfAllowedVersion);
         Assert.assertEquals("id", vcfLine.getID());
-        Assert.assertEquals("desc", vcfLine.getGenericFieldValue(VCFStructuredHeaderLine.DESCRIPTION_ATTRIBUTE));
+        Assert.assertEquals("desc", vcfLine.getGenericFieldValue(VCFSimpleHeaderLine.DESCRIPTION_ATTRIBUTE));
     }
 
     @Test(dataProvider="rejectedVCFVersions",expectedExceptions=TribbleException.class)

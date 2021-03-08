@@ -41,11 +41,11 @@ public class VCFMetaDataLinesUnitTest extends HtsjdkTest {
                 },
                 {       // filter matches structured key/value
                         new VCFFilterHeaderLine("id", "unused description"),
-                        new VCFStructuredHeaderLine("FILTER", Collections.singletonMap("ID", "id")), true
+                        new VCFSimpleHeaderLine("FILTER", Collections.singletonMap("ID", "id")), true
                 },
                 {       // structured key matches structured key/id
-                        new VCFStructuredHeaderLine("FILTER", Collections.singletonMap("ID", "id")),
-                        new VCFStructuredHeaderLine("FILTER", Collections.singletonMap("ID", "id")), true
+                        new VCFSimpleHeaderLine("FILTER", Collections.singletonMap("ID", "id")),
+                        new VCFSimpleHeaderLine("FILTER", Collections.singletonMap("ID", "id")), true
                 },
                 // Mixed structured/unstructured
                 {       // key overlaps key/value
@@ -53,7 +53,7 @@ public class VCFMetaDataLinesUnitTest extends HtsjdkTest {
                         new VCFHeaderLine("FILTER:id", "unused description"), false
                 },
                 {       // unstructured key matches structured "FILTER" key/value
-                        new VCFStructuredHeaderLine("FILTER", Collections.singletonMap("ID", "id")),
+                        new VCFSimpleHeaderLine("FILTER", Collections.singletonMap("ID", "id")),
                         new VCFHeaderLine("FILTER:id", "some value"), false
                 },
         };

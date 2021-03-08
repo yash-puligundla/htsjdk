@@ -35,8 +35,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static java.util.Collections.unmodifiableMap;
-
 /**
  * An abstract class representing a VCF metadata line with a key and attribute=value pairs, one of
  * which represents an ID. The key determines the "type" of the structured header line (i.e., contig, FILTER,
@@ -46,9 +44,9 @@ import static java.util.Collections.unmodifiableMap;
  * VCFHeader to ensure that no two structured header lines that share the same key in a given header have the
  * same ID).
  */
-public class VCFStructuredHeaderLine extends VCFHeaderLine {
+public class VCFSimpleHeaderLine extends VCFHeaderLine implements VCFIDHeaderLine {
     private static final long serialVersionUID = 1L;
-    protected final static Log logger = Log.getInstance(VCFStructuredHeaderLine.class);
+    protected final static Log logger = Log.getInstance(VCFSimpleHeaderLine.class);
 
     public static String ID_ATTRIBUTE = "ID";
     public static String DESCRIPTION_ATTRIBUTE = "Description";
@@ -63,7 +61,7 @@ public class VCFStructuredHeaderLine extends VCFHeaderLine {
     // Otherwise the values here should never change during the lifetime of the header line.
     private Map<String, String> genericFields;
 
-    public VCFStructuredHeaderLine(final String key, final String line, final VCFHeaderVersion version) {
+    public VCFSimpleHeaderLine(final String key, final String line, final VCFHeaderVersion version) {
         // We don't use any expectedTagOrder, since the only required tag is ID.
         this(key, VCFHeaderLineTranslator.parseLine(version, line, null));
         validate();
@@ -77,7 +75,7 @@ public class VCFStructuredHeaderLine extends VCFHeaderLine {
      * @param id id name to use for this line
      * @param description string that will be added as a "Description" tag to this line
      */
-    public VCFStructuredHeaderLine(final String key, final String id, final String description) {
+    public VCFSimpleHeaderLine(final String key, final String id, final String description) {
         super(key, "");
         genericFields = Collections.unmodifiableMap(new LinkedHashMap(){{
             put(ID_ATTRIBUTE, id);
@@ -93,7 +91,7 @@ public class VCFStructuredHeaderLine extends VCFHeaderLine {
      * @param attributeMapping field mappings to use. may not be null. must contain an "ID" field to use as
      *                         a unique id for this line
      */
-    public VCFStructuredHeaderLine(final String key, final Map<String, String> attributeMapping) {
+    public VCFSimpleHeaderLine(final String key, final Map<String, String> attributeMapping) {
         super(key, "");
         Utils.nonNull(attributeMapping, "An attribute map is required for structured header lines");
         genericFields = Collections.unmodifiableMap(new LinkedHashMap(attributeMapping));
@@ -208,7 +206,7 @@ public class VCFStructuredHeaderLine extends VCFHeaderLine {
             return false;
         }
 
-        final VCFStructuredHeaderLine that = (VCFStructuredHeaderLine) o;
+        final VCFSimpleHeaderLine that = (VCFSimpleHeaderLine) o;
         return genericFields.equals(that.genericFields);
     }
 

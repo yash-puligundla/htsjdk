@@ -2,13 +2,12 @@ package htsjdk.variant.vcf;
 
 import htsjdk.tribble.TribbleException;
 
-import java.util.Collections;
 import java.util.Map;
 
 /**
  * A class representing META fields in the VCF header
  */
-public class VCFMetaHeaderLine extends VCFStructuredHeaderLine {
+public class VCFMetaHeaderLine extends VCFSimpleHeaderLine {
     private static final long serialVersionUID = 1L;
 
     public VCFMetaHeaderLine(final String line, final VCFHeaderVersion version) {

@@ -29,7 +29,6 @@ import htsjdk.samtools.SAMSequenceDictionary;
 import htsjdk.samtools.SAMSequenceRecord;
 import htsjdk.samtools.util.CloseableIterator;
 import htsjdk.samtools.util.FileExtensions;
-import htsjdk.samtools.util.IOUtil;
 import htsjdk.samtools.util.TestUtil;
 import htsjdk.tribble.TribbleException;
 import htsjdk.tribble.readers.AsciiLineReader;
@@ -782,7 +781,7 @@ public class VCFHeaderUnitTest extends VariantBaseTest {
         final VCFFileReader originalFileReader = new VCFFileReader(new File("src/test/resources/htsjdk/variant/VCF4HeaderTest.vcf"), false);
         final VCFHeader originalHeader = originalFileReader.getFileHeader();
 
-        final VCFStructuredHeaderLine addedHeaderLine = new VCFFilterHeaderLine(
+        final VCFSimpleHeaderLine addedHeaderLine = new VCFFilterHeaderLine(
                 "FakeFilter",
                 "filterName=[ANNOTATION] filterExpression=[ANNOTATION == \"NA\" || ANNOTATION <= 2.0]");
         originalHeader.addMetaDataLine(addedHeaderLine);

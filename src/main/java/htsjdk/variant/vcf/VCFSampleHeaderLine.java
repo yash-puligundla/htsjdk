@@ -1,16 +1,14 @@
 package htsjdk.variant.vcf;
 
 import htsjdk.tribble.TribbleException;
-import htsjdk.utils.Utils;
 
-import java.util.Collections;
 import java.util.Map;
 
 /**
  * TODO: these are not well defined in the VCF 4.3 spec; they appear to require IDs,
  * TODO: and have lots of possible attributes
  */
-public class VCFSampleHeaderLine extends VCFStructuredHeaderLine {
+public class VCFSampleHeaderLine extends VCFSimpleHeaderLine {
 
     private static final long serialVersionUID = 1L;
 

@@ -33,7 +33,7 @@ public class VCFPedigreeHeaderLineUnitTest extends HtsjdkTest {
     public void testAllowedVersions(final VCFHeaderVersion vcfAllowedVersion) {
         VCFPedigreeHeaderLine vcfLine = new VCFPedigreeHeaderLine(pedigreeString, vcfAllowedVersion);
         Assert.assertEquals("id", vcfLine.getID());
-        Assert.assertEquals("desc", vcfLine.getGenericFieldValue(VCFStructuredHeaderLine.DESCRIPTION_ATTRIBUTE));
+        Assert.assertEquals("desc", vcfLine.getGenericFieldValue(VCFSimpleHeaderLine.DESCRIPTION_ATTRIBUTE));
     }
 
     @Test(dataProvider="rejectedVCFVersions",expectedExceptions=TribbleException.class)

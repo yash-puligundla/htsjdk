@@ -35,7 +35,6 @@ import htsjdk.variant.vcf.VCFHeaderLine;
 import htsjdk.variant.vcf.VCFHeaderLineCount;
 import htsjdk.variant.vcf.VCFHeaderLineType;
 import htsjdk.variant.vcf.VCFInfoHeaderLine;
-import htsjdk.variant.vcf.VCFStructuredHeaderLine;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -43,11 +42,8 @@ import org.testng.annotations.Test;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
-
-import static htsjdk.variant.vcf.VCFStructuredHeaderLine.DESCRIPTION_ATTRIBUTE;
 
 /**
  * Tests for BCF2Utils

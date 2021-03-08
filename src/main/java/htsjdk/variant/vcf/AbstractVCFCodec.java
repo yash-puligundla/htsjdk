@@ -358,7 +358,7 @@ public abstract class AbstractVCFCodec extends AsciiFeatureCodec<VariantContext>
         } else {
             final String headerLineValue = headerLineString.substring(indexOfEquals + 1);
             if (headerLineValue.startsWith("<") && headerLineValue.endsWith(">")) {
-                return new VCFStructuredHeaderLine(
+                return new VCFSimpleHeaderLine(
                         headerLineString.substring(0, indexOfEquals),
                         headerLineString.substring(indexOfEquals + 1),
                         sourceVersion);

@@ -27,7 +27,7 @@ import java.util.*;
 /**
  * A class representing ALT fields in the VCF header
  */
-public class VCFAltHeaderLine extends VCFStructuredHeaderLine {
+public class VCFAltHeaderLine extends VCFSimpleHeaderLine {
     private static final long serialVersionUID = 1L;
     protected final static Log logger = Log.getInstance(VCFHeader.class);
 

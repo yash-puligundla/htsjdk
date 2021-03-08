@@ -34,14 +34,14 @@ import java.util.*;
  * 
  * A class representing FILTER fields in the VCF header
  */
-public class VCFFilterHeaderLine extends VCFStructuredHeaderLine {
+public class VCFFilterHeaderLine extends VCFSimpleHeaderLine {
 
     private static final long serialVersionUID = 1L;
 
     private static List<String> requiredTagOrder = Collections.unmodifiableList(
             new ArrayList<String>(2) {{
             add(ID_ATTRIBUTE);
-            add(VCFStructuredHeaderLine.DESCRIPTION_ATTRIBUTE);
+            add(VCFSimpleHeaderLine.DESCRIPTION_ATTRIBUTE);
         }}
     );
 

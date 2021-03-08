@@ -2,7 +2,6 @@ package htsjdk.variant.vcf;
 
 import htsjdk.tribble.TribbleException;
 
-import java.util.Collections;
 import java.util.Map;
 
 /**
@@ -14,7 +13,7 @@ import java.util.Map;
  * ##PEDIGREE=<ID=SampleID,Name_1=Ancestor_1,...,Name_N=Ancestor_N>
  * or a link to a database: ##pedigreeDB=URL
  */
-public class VCFPedigreeHeaderLine extends VCFStructuredHeaderLine {
+public class VCFPedigreeHeaderLine extends VCFSimpleHeaderLine {
 
     private static final long serialVersionUID = 1L;
 

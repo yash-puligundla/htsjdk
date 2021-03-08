@@ -32,7 +32,6 @@ import htsjdk.tribble.TribbleException;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.*;
 import java.util.regex.Pattern;
 
 /**
@@ -42,7 +41,7 @@ import java.util.regex.Pattern;
  *
  * @author mdepristo
  */
-public class VCFContigHeaderLine extends VCFStructuredHeaderLine {
+public class VCFContigHeaderLine extends VCFSimpleHeaderLine {
     private static final long serialVersionUID = 1L;
     protected final static Log logger = Log.getInstance(VCFContigHeaderLine.class);
 
@@ -78,7 +77,7 @@ public class VCFContigHeaderLine extends VCFStructuredHeaderLine {
      */
     public VCFContigHeaderLine(final String line, final VCFHeaderVersion version, final int contigIndex) {
         this(VCFHeaderLineTranslator.parseLine(
-                version, line, Collections.singletonList(VCFStructuredHeaderLine.ID_ATTRIBUTE)), contigIndex);
+                version, line, Collections.singletonList(VCFSimpleHeaderLine.ID_ATTRIBUTE)), contigIndex);
         validateForVersion(version);
     }
 
