@@ -54,19 +54,34 @@ public class VCFContigHeaderLine extends VCFSimpleHeaderLine {
     public static String URL_ATTRIBUTE = "URL";
     public static String SPECIES_ATTRIBUTE = "species";
 
+    /**
+     * create a VCF contig header line
+     *
+     * NOTE: This is retained for backward compatibility, but is deprecated and should not be used.
+     *
+     * @param line      the header line
+     * @param version   the vcf header version
+     * @param key            the key for this header line
+     */
     @Deprecated
-//    /**
-//     * create a VCF contig header line
-//     *
-//     * @param line      the header line
-//     * @param version   the vcf header version
-//     * @param key            the key for this header line
-//     */
-//    public VCFContigHeaderLine(final String line, final VCFHeaderVersion version, final String key, final int contigIndex) {
-//        super(line, version, key, null, Collections.emptyList());
-//        if (contigIndex < 0) throw new TribbleException("The contig index is less than zero.");
-//        this.contigIndex = contigIndex;
-//    }
+    public VCFContigHeaderLine(final String line, final VCFHeaderVersion version, final String key, final int contigIndex) {
+        this(line, version, contigIndex);
+        if (!VCFHeader.CONTIG_KEY.equals(key)) {
+            logger.warn(String.format(
+                    "Found key \"%s\". The key for contig header lines must be %s.",
+                    key,
+                    VCFHeader.CONTIG_KEY));
+        }
+        if (contigIndex < 0) {
+            throw new TribbleException("The contig index is less than zero.");
+        }
+        ValidationUtils.validateArg(
+                this.contigIndex == (contigIndex + 1),
+                String.format(
+                        "The provided line contains a different context index %s than the one provided directly to the method %s",
+                        this.contigIndex,
+                        contigIndex));
+    }
 
     /**
      * create a VCF contig header line
