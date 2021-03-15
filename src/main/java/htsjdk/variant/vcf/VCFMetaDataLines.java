@@ -23,11 +23,11 @@ class VCFMetaDataLines implements Serializable {
     // TODO: GATK VcfUtilsUnitTest.createHeaderLines test creates headers with contig lines with identical (0) indices
     private final Map<String, VCFHeaderLine> mMetaData = new LinkedHashMap<>();
 
-    private static String KEY_SEPARATOR = ":";
+    private static final String KEY_SEPARATOR = ":";
 
     // Namespace key used for "other" (unstructured, non-ID) metadata lines. This string needs to be different from
     // any string in the set of legal structured line types in knownStructuredLineKeys.
-    private static String OTHER_KEY = "OTHER";
+    private static final String OTHER_KEY = "OTHER";
 
     /**
      * Add all metadata lines from Set. If a duplicate line is encountered (same key/ID pair for
@@ -89,6 +89,7 @@ class VCFMetaDataLines implements Serializable {
      * @param headerLine
      * @return
      */
+    //TODO should this be delegated to the VCFHederLine classes ?
     private String makeKeyForLine(final VCFHeaderLine headerLine) {
         if (headerLine.isIDHeaderLine()) { // required to have a unique ID
             // use the line type as the namespace, to ensure unique key/id combination

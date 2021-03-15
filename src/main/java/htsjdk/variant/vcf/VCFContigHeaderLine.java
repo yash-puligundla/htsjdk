@@ -28,6 +28,7 @@ package htsjdk.variant.vcf;
 import htsjdk.samtools.SAMSequenceRecord;
 import htsjdk.samtools.util.Log;
 import htsjdk.tribble.TribbleException;
+import htsjdk.utils.ValidationUtils;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -48,11 +49,11 @@ public class VCFContigHeaderLine extends VCFSimpleHeaderLine {
     final static Pattern VALID_CONTIG_ID_PATTERN = Pattern.compile("[0-9A-Za-z!#$%&+./:;?@^_|~-][0-9A-Za-z!#$%&*+./:;=?@^_|~-]*");
     final Integer contigIndex;
 
-    public static String LENGTH_ATTRIBUTE = "length";
-    public static String ASSEMBLY_ATTRIBUTE = "assembly";
-    public static String MD5_ATTRIBUTE = "md5";
-    public static String URL_ATTRIBUTE = "URL";
-    public static String SPECIES_ATTRIBUTE = "species";
+    public static final String LENGTH_ATTRIBUTE = "length";
+    public static final String ASSEMBLY_ATTRIBUTE = "assembly";
+    public static final String MD5_ATTRIBUTE = "md5";
+    public static final String URL_ATTRIBUTE = "URL";
+    public static final String SPECIES_ATTRIBUTE = "species";
 
     /**
      * create a VCF contig header line

@@ -68,6 +68,11 @@ public class VCFHeaderLine implements Comparable, Serializable {
      *
      * @return the value
      */
+    //TODO: subclasses such as VCFSimpleHeaderLine use a null for the value, so it should be overridden
+    // by those classes so they return an encoded version of the value part of the string (or perhaps
+    // they should pass that in to this class' constructor so it will never be null...which would
+    // require all of these classes to be fully immutable
+    //TODO: OR update javadoc to say this can be null
     public String getValue() {
         return mValue;
     }
@@ -194,6 +199,8 @@ public class VCFHeaderLine implements Comparable, Serializable {
      * @param keyValues a mapping of the key-&gt;value pairs to output
      * @return a string, correctly formatted
      */
+    //TODO: this should be removed and folded into toStringEncoding(): String, or else
+    // protected and VisibleForTesting
     public static String toStringEncoding(Map<String, ? extends Object> keyValues) {
         StringBuilder builder = new StringBuilder();
         builder.append('<');

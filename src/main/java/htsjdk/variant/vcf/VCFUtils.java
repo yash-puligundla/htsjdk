@@ -50,8 +50,9 @@ public class VCFUtils {
     private static final Pattern INF_OR_NAN_PATTERN = Pattern.compile("^(?<sign>[-+]?)((?<inf>(INF|INFINITY))|(?<nan>NAN))$", Pattern.CASE_INSENSITIVE);
 
     //TODO: Once we settle on the uses for this, we should determine how it gets set. For now its static/global.
-    public static boolean VCF_STRICT_VERSION_VALIDATION = true;
-    public static boolean VCF_VERBOSE_LOGGING = true;
+    //TODO: these are temporarily final for now in order to keep spotbugs from failing
+    public static final boolean VCF_STRICT_VERSION_VALIDATION = true;
+    public static final boolean VCF_VERBOSE_LOGGING = true;
 
     public static boolean getStrictVCFVersionValidation() { return VCF_STRICT_VERSION_VALIDATION; }
     public static boolean getVerboseVCFLogging() { return VCF_VERBOSE_LOGGING; }

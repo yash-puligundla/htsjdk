@@ -46,12 +46,12 @@ import java.util.stream.Collectors;
  */
 public class VCFSimpleHeaderLine extends VCFHeaderLine implements VCFIDHeaderLine {
     private static final long serialVersionUID = 1L;
-    protected final static Log logger = Log.getInstance(VCFSimpleHeaderLine.class);
+    protected static final Log logger = Log.getInstance(VCFSimpleHeaderLine.class);
 
-    public static String ID_ATTRIBUTE = "ID";
-    public static String DESCRIPTION_ATTRIBUTE = "Description";
-    public static String SOURCE_ATTRIBUTE = "Source";
-    public static String VERSION_ATTRIBUTE = "Version";
+    public static final String ID_ATTRIBUTE = "ID";
+    public static final String DESCRIPTION_ATTRIBUTE = "Description";
+    public static final String SOURCE_ATTRIBUTE = "Source";
+    public static final String VERSION_ATTRIBUTE = "Version";
 
     // Map used to retain the attribute/value pairs, in original order. The first entry in the map must be
     // an ID field. The entire map must be immutable to prevent hash values from changing, since these are
@@ -59,6 +59,8 @@ public class VCFSimpleHeaderLine extends VCFHeaderLine implements VCFIDHeaderLin
     // "repair" header lines (via a call to updateGenericField) during constructor validation.
     //
     // Otherwise the values here should never change during the lifetime of the header line.
+    //TODO: this needs to be a (unmodifiable) LinkedHashMap so that it preserves order
+    //TODO: including things like toString()
     private Map<String, String> genericFields;
 
     public VCFSimpleHeaderLine(final String key, final String line, final VCFHeaderVersion version) {
@@ -91,6 +93,7 @@ public class VCFSimpleHeaderLine extends VCFHeaderLine implements VCFIDHeaderLin
      * @param attributeMapping field mappings to use. may not be null. must contain an "ID" field to use as
      *                         a unique id for this line
      */
+    //TODO: this arg needs to be typed as a LinkedHashMap since order is important
     public VCFSimpleHeaderLine(final String key, final Map<String, String> attributeMapping) {
         super(key, "");
         Utils.nonNull(attributeMapping, "An attribute map is required for structured header lines");
@@ -156,7 +159,7 @@ public class VCFSimpleHeaderLine extends VCFHeaderLine implements VCFIDHeaderLin
     @Override
     protected String toStringEncoding() {
         //NOTE: this preserves/round-trips "extra" attributes such as SOURCE, VERSION, etc.
-        StringBuilder builder = new StringBuilder();
+        final StringBuilder builder = new StringBuilder();
         builder.append(getKey());
         builder.append("=<");
         builder.append(genericFields.entrySet().stream()

@@ -54,8 +54,8 @@ public abstract class VCFCompoundHeaderLine extends VCFSimpleHeaderLine {
     protected static final Pattern VALID_HEADER_ID_PATTERN = Pattern.compile("^[A-Za-z_][0-9A-Za-z_.]*$");
     protected static final String UNBOUND_DESCRIPTION = "Not provided in original VCF header";
 
-    protected static String NUMBER_ATTRIBUTE = "Number";
-    protected static String TYPE_ATTRIBUTE = "Type";
+    protected static final String NUMBER_ATTRIBUTE = "Number";
+    protected static final String TYPE_ATTRIBUTE = "Type";
 
     // List of expected tags that have a predefined order (used by the parser to verify order only). The
     // header line class itself should verify that all required tags are present.
@@ -190,7 +190,7 @@ public abstract class VCFCompoundHeaderLine extends VCFSimpleHeaderLine {
                 throw new TribbleException.InvalidHeader(String.format("Missing count value in VCF header field %s", getID()));
             }
             try {
-                lineCount = Integer.valueOf(countString);
+                lineCount = Integer.parseInt(countString);
             } catch (NumberFormatException e) {
                 throw new TribbleException.InvalidHeader(String.format("Invalid count value %s in VCF header field %s", lineCount, getID()));
             }

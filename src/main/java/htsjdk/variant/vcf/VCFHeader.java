@@ -176,6 +176,8 @@ public class VCFHeader implements Serializable {
         // 3) the default VCFHeaderVersion
         this.vcfHeaderVersion = establishHeaderVersion(vcfHeaderVersion, metaData);
 
+        //TODO: if the metaData thats passed in has no version metadata line, then this header
+        //TODO: won't have one - should that be detected here and manually added if thats the case?
         mMetaData.addAllMetaDataLines(metaData);
         mMetaData.validateMetaDataLines(this.vcfHeaderVersion);
 
