@@ -29,7 +29,6 @@ import htsjdk.samtools.util.Log;
 import htsjdk.tribble.TribbleException;
 import htsjdk.utils.Utils;
 
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
@@ -59,9 +58,8 @@ public class VCFSimpleHeaderLine extends VCFHeaderLine implements VCFIDHeaderLin
     // "repair" header lines (via a call to updateGenericField) during constructor validation.
     //
     // Otherwise the values here should never change during the lifetime of the header line.
-    //TODO: this needs to be a (unmodifiable) LinkedHashMap so that it preserves order
-    //TODO: including things like toString()
-    private Map<String, String> genericFields;
+    //Note: this needs to be a LinkedHashMap so that it preserves order of attributes as presented
+    private final Map<String, String> genericFields = new LinkedHashMap();
 
     public VCFSimpleHeaderLine(final String key, final String line, final VCFHeaderVersion version) {
         // We don't use any expectedTagOrder, since the only required tag is ID.
@@ -77,12 +75,11 @@ public class VCFSimpleHeaderLine extends VCFHeaderLine implements VCFIDHeaderLin
      * @param id id name to use for this line
      * @param description string that will be added as a "Description" tag to this line
      */
+    //TODO: deprecate these constructors that have no target version ?
     public VCFSimpleHeaderLine(final String key, final String id, final String description) {
         super(key, "");
-        genericFields = Collections.unmodifiableMap(new LinkedHashMap(){{
-            put(ID_ATTRIBUTE, id);
-            put(DESCRIPTION_ATTRIBUTE, description);
-        }});
+        genericFields.put(ID_ATTRIBUTE, id);
+        genericFields.put(DESCRIPTION_ATTRIBUTE, description);
         validate();
     }
 
@@ -97,7 +94,7 @@ public class VCFSimpleHeaderLine extends VCFHeaderLine implements VCFIDHeaderLin
     public VCFSimpleHeaderLine(final String key, final Map<String, String> attributeMapping) {
         super(key, "");
         Utils.nonNull(attributeMapping, "An attribute map is required for structured header lines");
-        genericFields = Collections.unmodifiableMap(new LinkedHashMap(attributeMapping));
+        genericFields.putAll(attributeMapping);
         validate();
     }
 
@@ -107,10 +104,7 @@ public class VCFSimpleHeaderLine extends VCFHeaderLine implements VCFIDHeaderLin
     //
     // Replaces the original generic fields map with another immutable map with the updated value.
     protected void updateGenericField(final String attributeName, final String value) {
-        // a little inefficient, but this happens pretty rarely
-        final Map<String, String> tempMap = new LinkedHashMap(genericFields);
-        tempMap.put(attributeName, value);
-        genericFields = Collections.unmodifiableMap(new LinkedHashMap(tempMap));
+        genericFields.put(attributeName, value);
     }
 
     private void validate() {
@@ -118,7 +112,7 @@ public class VCFSimpleHeaderLine extends VCFHeaderLine implements VCFIDHeaderLin
             throw new TribbleException(
                     String.format("The required ID tag is missing or not the first attribute: key=%s", super.getKey()));
         }
-        validateAsID(getGenericFieldValue(ID_ATTRIBUTE), "ID");
+        validateKeyOrID(getGenericFieldValue(ID_ATTRIBUTE), "ID");
     }
 
     /**

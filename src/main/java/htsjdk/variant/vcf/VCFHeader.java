@@ -60,7 +60,6 @@ public class VCFHeader implements Serializable {
         CHROM, POS, ID, REF, ALT, QUAL, FILTER, INFO
     }
 
-
     /**
      * The VCF version for this header; once a header version is established, it can only be
      * changed subject to version transition rules defined by
@@ -104,7 +103,9 @@ public class VCFHeader implements Serializable {
     /**
      * Create an empty VCF header with no header lines and no samples
      */
-    public VCFHeader() { this.vcfHeaderVersion = DEFAULT_VCF_VERSION; }
+    public VCFHeader() {
+        this(null, Collections.<VCFHeaderLine>emptySet(), Collections.<String>emptySet());
+    }
 
     /**
      * Create a VCF header, given a list of meta data and auxiliary tags
@@ -112,7 +113,7 @@ public class VCFHeader implements Serializable {
      * @param metaData the meta data associated with this header
      */
     public VCFHeader(final Set<VCFHeaderLine> metaData) {
-        this(null, metaData, new HashSet<>());
+        this(null, metaData, Collections.<String>emptySet());
     }
 
     /**

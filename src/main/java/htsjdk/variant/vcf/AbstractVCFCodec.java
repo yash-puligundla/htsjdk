@@ -345,7 +345,7 @@ public abstract class AbstractVCFCodec extends AsciiFeatureCodec<VariantContext>
      */
     public VCFHeaderLine getOtherHeaderLine(final String headerLineString, final VCFHeaderVersion sourceVersion) {
         final int indexOfEquals = headerLineString.indexOf('=');
-        if ( indexOfEquals < 3 ) { // must at least have "##?="
+        if ( indexOfEquals < 1 ) { // must at least have "?="
             // TODO: NOTE: the old code silently dropped metadata lines with no "="; now we log, or throw for verbose logging
             if (VCFUtils.getStrictVCFVersionValidation()) {
                 throw new TribbleException.InvalidHeader("Unrecognized metadata line type: " + headerLineString);
@@ -356,8 +356,17 @@ public abstract class AbstractVCFCodec extends AsciiFeatureCodec<VariantContext>
             }
             return null;
         } else {
-            final String headerLineValue = headerLineString.substring(indexOfEquals + 1);
-            if (headerLineValue.startsWith("<") && headerLineValue.endsWith(">")) {
+            final String headerLineValue = headerLineString.substring(indexOfEquals + 1).trim();
+            if (headerLineValue.startsWith("<") && headerLineValue.endsWith(">") &&
+                    sourceVersion.isAtLeastAsRecentAs((VCFHeaderVersion.VCF4_3))) {
+                // Model all "other" header lines as VCFSimpleHeaderLine starting with 4.3, but
+                // for pre-v4.3, use VCFHeaderLine. This is to accommodate older files that contain
+                // lines with structured header line syntax ("<>" delimited) but which do not contain
+                // an ID field. Starting with 4.3, this is prohibited by the spec since an ID is required,
+                // but we need to be able to consume such lines in pre-v43 files.
+                // i.e., GATK Funcotator uses v4.1 ClinVar test files with lines like:
+                // "ID=<Description=\"ClinVar Variation ID\">", where the "ID" is the key and there is
+                // no ID attribute
                 return new VCFSimpleHeaderLine(
                         headerLineString.substring(0, indexOfEquals),
                         headerLineString.substring(indexOfEquals + 1),

@@ -102,7 +102,7 @@ public class VCFHeaderLineUnitTest extends VariantBaseTest {
 
     @Test(dataProvider = "invalidHeaderLineKeys", expectedExceptions=TribbleException.class)
     public void testValidateAsIdInvalid(final String testKey) {
-        VCFHeaderLine.validateAsID(testKey, "test");
+        VCFHeaderLine.validateKeyOrID(testKey, "test");
     }
 
     @DataProvider(name = "vcfVersions")

@@ -92,7 +92,7 @@ public class VCFHeaderLine implements Comparable, Serializable {
      * Validate the state of this header line. Require the key be valid as an "id".
      */
     private void validate() {
-        validateAsID(mKey, "key");
+        validateKeyOrID(mKey, "key");
     }
 
     /**
@@ -100,9 +100,10 @@ public class VCFHeaderLine implements Comparable, Serializable {
      * to change the version of a VCFHeader by changing it's target version. Validates that the header line
      * conforms to the target version requirements.
      *
-     * Subclasses should override this to provide type-specific version validation, and the overrides should
+     * Subclasses can override this to provide line-specific version validation, and the overrides should
      * also call super.validateForVersion to allow each class in the class hierarchy to do class-level validation.
      */
+    //TODO: should we implement this for all/any subclasses ?
     public void validateForVersion(final VCFHeaderVersion vcfTargetVersion) {
         // If this header line is itself a fileformat/version line,
         // make sure it doesn't clash with the new targetVersion.
@@ -120,11 +121,11 @@ public class VCFHeaderLine implements Comparable, Serializable {
     /**
      * Validate a string that is to be used as a unique id or key field.
      */
-    protected static void validateAsID(final String keyString, final String sourceName) {
+    protected static void validateKeyOrID(final String keyString, final String sourceName) {
         Utils.nonNull(sourceName);
         if (keyString == null) {
             throw new TribbleException(
-                    String.format("VCFHeaderLine: A valid %s cannot be null or empty", sourceName));
+                    String.format("VCFHeaderLine: %s cannot be null or empty", sourceName));
         }
         if ( keyString.contains("<") || keyString.contains(">") ) {
             throw new TribbleException(
