@@ -178,7 +178,7 @@ class VCFWriter extends IndexingVariantContextWriter {
                                         final String streamNameForError) {
 
         try {
-            //rejectVCFV43Headers(header);
+            rejectVCFV43Headers(header);
 
             // Validate that the file version we're writing is version-compatible this header's version.
             validateHeaderVersion(header, versionLine);
