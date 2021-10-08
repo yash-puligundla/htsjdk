@@ -33,6 +33,7 @@ import java.nio.charset.*;
 /**
  * Fast (I hope) buffered Writer that converts char to byte merely by casting, rather than charset conversion.
  */
+@Deprecated
 public class AsciiWriter extends Writer {
 
     private final OutputStream os;
