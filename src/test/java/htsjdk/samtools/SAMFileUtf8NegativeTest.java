@@ -2,18 +2,14 @@ package htsjdk.samtools;
 
 import htsjdk.*;
 import htsjdk.samtools.util.*;
-
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.*;
 import org.testng.*;
 import org.testng.annotations.*;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.nio.charset.Charset;
+import java.io.*;
+import java.nio.charset.*;
 
-public class SAMFileUtf8PositiveTest extends HtsjdkTest {
+public class SAMFileUtf8NegativeTest extends HtsjdkTest {
     private static final File TEST_DATA_DIR = new File("src/test/resources/htsjdk/samtools");
 
     // UTF-8 is allowed in the following fields in SAMv1
@@ -22,14 +18,14 @@ public class SAMFileUtf8PositiveTest extends HtsjdkTest {
     // @PG - CL, DS
     // @CO
 
-    @DataProvider(name = "Utf8PositiveTestCases")
-    public Object[][] WriteUtf8PositiveTestCases() {
+    @DataProvider(name = "Utf8NegativeTestCases")
+    public Object[][] WriteUtf8NegativeTestCases() {
         SAMSequenceRecord sequenceRecord_1 = new SAMSequenceRecord("chr1", 101);
         sequenceRecord_1.setAttribute("DS", "sq description");
         sequenceRecord_1.setSequenceIndex(0);
 
         SAMReadGroupRecord readGroupRecord_1 = new SAMReadGroupRecord("rg1");
-        readGroupRecord_1.setAttribute("SM", "Hi,Mom!");
+        readGroupRecord_1.setAttribute("SM", "Hi,カMom!");
         readGroupRecord_1.setAttribute("DS", "rg description");
 
         SAMProgramRecord programRecord_1 = new SAMProgramRecord("33");
@@ -49,7 +45,7 @@ public class SAMFileUtf8PositiveTest extends HtsjdkTest {
         sequenceRecord_2.setSequenceIndex(0);
 
         SAMReadGroupRecord readGroupRecord_2 = new SAMReadGroupRecord("rg1");
-        readGroupRecord_2.setAttribute("SM", "Hi,Mom!");
+        readGroupRecord_2.setAttribute("SM", "Hi,カMom!");
         readGroupRecord_2.setAttribute("DS", "Kanjiアメリカ");
 
         SAMProgramRecord programRecord_2 = new SAMProgramRecord("33");
@@ -88,13 +84,12 @@ public class SAMFileUtf8PositiveTest extends HtsjdkTest {
         samRecord_2.setBaseQualities(SAMRecord.NULL_QUALS);
 
         return new Object[][]{
-                {"utf8_encoded_write_positive_1.sam",samRecord_1},
-                {"utf8_encoded_write_positive_2.sam",samRecord_2}
+                {"utf8_encoded_write_negative_1.sam",samRecord_1}
         };
     }
 
-    @Test(dataProvider = "Utf8PositiveTestCases", description = "Test reading of a SAM file with UTF-8 encoding present/absent in the permitted fields")
-    public void ReadUtf8PositiveTests(final String inputFile, final SAMRecord samRecord) throws Exception {
+    @Test(dataProvider = "Utf8NegativeTestCases", description = "Test reading of a SAM file with UTF-8 encoding present/absent in the permitted fields")
+    public void ReadUtf8NegativeTests(final String inputFile, final SAMRecord samRecord) throws Exception {
 
         final File input = new File(TEST_DATA_DIR, inputFile);
         SAMFileHeader expected_samFileHeader = samRecord.getHeader();
@@ -102,18 +97,19 @@ public class SAMFileUtf8PositiveTest extends HtsjdkTest {
         try (SamReader reader = SamReaderFactory.makeDefault().open(input)) {
             SAMFileHeader head = reader.getFileHeader();
             Assert.assertEquals(head.getSequence("chr1"), expected_samFileHeader.getSequence("chr1"));
-            Assert.assertEquals(head.getReadGroup("rg1"), expected_samFileHeader.getReadGroup("rg1"));
+//            Assert.assertEquals(head.getReadGroup("rg1"), expected_samFileHeader.getReadGroup("rg1"));
+            Assert.assertEquals(head.getReadGroup("rg1").getSample(), expected_samFileHeader.getReadGroup("rg1").getSample());
             Assert.assertEquals(head.getProgramRecords().get(0), expected_samFileHeader.getProgramRecord("33"));
             Assert.assertEquals(head.getComments().get(0), expected_samFileHeader.getComments().get(0));
+
         }
     }
 
-    @Test(dataProvider = "Utf8PositiveTestCases", description = "Test writing of a SAM file with UTF-8 encoding present/absent in the permitted fields")
-    public void WriteUtf8PositiveTests(final String inputFile, SAMRecord expected_samRecord) throws Exception {
+    @Test(dataProvider = "Utf8NegativeTestCases", description = "Test writing of a SAM file with UTF-8 encoding present/absent in the permitted fields")
+    public void WriteUtf8NegativeTests(final String inputFile, SAMRecord expected_samRecord) throws Exception {
 
         final File input = new File(TEST_DATA_DIR, inputFile);
         final File outputFile = File.createTempFile("write-utf8-positive-out", ".sam");
-//        final File outputFile = new File("write-utf8-positive-out.sam");
         outputFile.delete();
         outputFile.deleteOnExit();
 
@@ -131,30 +127,5 @@ public class SAMFileUtf8PositiveTest extends HtsjdkTest {
         }
 
         Assert.assertEquals(writtenSam, originalsam);
-    }
-
-    public static boolean isPureAscii(String v) {
-        return Charset.forName("US-ASCII").newEncoder().canEncode(v);
-        // or "ISO-8859-1" for ISO Latin 1
-        // or StandardCharsets.US_ASCII with JDK1.7+
-    }
-
-    @Test
-    public void TestAscii(){
-        char c = 'モ';
-
-        System.out.println("Int value : "+ (int) c);
-        if (((int) c)>127){
-            System.out.println("Is Not ascii....");
-        }
-        else{
-            System.out.println("Is Ascii.....");
-        }
-        System.out.println(StringUtils.isAsciiPrintable("!@£$%^&!@£$%^"));
-        System.out.println(StringUtils.isAsciiPrintable("モ"));
-        System.out.println(StringUtils.isAsciiPrintable("asciiYes"));
-
-
-        Assert.assertEquals("1","2");
     }
 }

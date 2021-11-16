@@ -27,6 +27,7 @@ package htsjdk.samtools;
 import htsjdk.samtools.util.Iso8601Date;
 import htsjdk.samtools.util.SamConstants;
 
+import java.nio.charset.*;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
@@ -100,8 +101,19 @@ public class SAMReadGroupRecord extends AbstractSAMHeaderRecord
     public String getId() { return getReadGroupId();  }
     public String getReadGroupId() { return mReadGroupId; }
 
-    public String getSample() { return getAttribute(READ_GROUP_SAMPLE_TAG); }
-    public void setSample(final String value) { setAttribute(READ_GROUP_SAMPLE_TAG, value); }
+    public String getSample() {
+        String sample = getAttribute(READ_GROUP_SAMPLE_TAG);
+        if (Charset.forName("US-ASCII").newEncoder().canEncode(sample)) {
+            return sample;
+        }
+        else throw new SAMException("Non ascii String...."+sample);
+    }
+    public void setSample(final String value) {
+        if (Charset.forName("US-ASCII").newEncoder().canEncode(value)) {
+            setAttribute(READ_GROUP_SAMPLE_TAG, value);
+        }
+        else throw new SAMException("Non ascii String...."+value);
+    }
 
     public String getLibrary() { return getAttribute(LIBRARY_TAG); }
     public void setLibrary(final String value) { setAttribute(LIBRARY_TAG, value); }

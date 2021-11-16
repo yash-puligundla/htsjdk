@@ -1,0 +1,6 @@
+@HD	VN:1.6	SO:unsorted
+@SQ	SN:chr1	LN:101	DS:sq description
+@RG	ID:rg1	SM:Hi,カMom!	DS:rg description
+@PG	ID:33	CL:xy	DS:pg description
+@CO	comment here
+A	0	chr1	1	255	10M	*	0	0	CAACAGAAGC	*
