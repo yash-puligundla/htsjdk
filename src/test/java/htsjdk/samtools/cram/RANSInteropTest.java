@@ -16,7 +16,6 @@ import org.testng.SkipException;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -162,7 +161,7 @@ public class RANSInteropTest extends HtsjdkTest {
             // preprocess the uncompressed data (to match what the htscodecs-library test harness does)
             // by filtering out the embedded newlines, and then round trip through RANS and compare the
             // results
-            final ByteBuffer uncompressedInteropBytes = ByteBuffer.wrap(filterEmbeddedNewlines(IOUtils.toByteArray(uncompressedInteropStream)));
+            final ByteBuffer uncompressedInteropBytes = ByteBuffer.wrap(CRAMInteropTestUtils.filterEmbeddedNewlines(IOUtils.toByteArray(uncompressedInteropStream)));
             final ByteBuffer compressedHtsjdkBytes = ransEncode.compress(uncompressedInteropBytes, params);
             uncompressedInteropBytes.rewind();
             Assert.assertEquals(ransDecode.uncompress(compressedHtsjdkBytes), uncompressedInteropBytes);
@@ -181,7 +180,7 @@ public class RANSInteropTest extends HtsjdkTest {
             final RANSParams params,
             final String compressedInteropDirName) throws IOException {
 
-        final Path preCompressedInteropPath = getCompressedRANSPath(compressedInteropDirName,uncompressedInteropPath, params);
+        final Path preCompressedInteropPath = CRAMInteropTestUtils.getCompressedCodecPath(compressedInteropDirName,uncompressedInteropPath, params.getFormatFlags());
 
         try (final InputStream uncompressedInteropStream = Files.newInputStream(uncompressedInteropPath);
              final InputStream preCompressedInteropStream = Files.newInputStream(preCompressedInteropPath)
@@ -189,7 +188,7 @@ public class RANSInteropTest extends HtsjdkTest {
             // preprocess the uncompressed data (to match what the htscodecs-library test harness does)
             // by filtering out the embedded newlines, and then round trip through RANS and compare the
             // results
-            final ByteBuffer uncompressedInteropBytes = ByteBuffer.wrap(filterEmbeddedNewlines(IOUtils.toByteArray(uncompressedInteropStream)));
+            final ByteBuffer uncompressedInteropBytes = ByteBuffer.wrap(CRAMInteropTestUtils.filterEmbeddedNewlines(IOUtils.toByteArray(uncompressedInteropStream)));
 
             final ByteBuffer preCompressedInteropBytes = ByteBuffer.wrap(IOUtils.toByteArray(preCompressedInteropStream));
 
@@ -204,7 +203,7 @@ public class RANSInteropTest extends HtsjdkTest {
         }
     }
 
-    // return a list of all RANS test data files in the htscodecs/tests directory
+    // return a list of all RANS test data files in the htscodecs/tests/dat directory
     private List<Path> getInteropRANSTestFiles() throws IOException {
         final List<Path> paths = new ArrayList<>();
         Files.newDirectoryStream(
@@ -215,37 +214,6 @@ public class RANSInteropTest extends HtsjdkTest {
                                 path.getFileName().startsWith("q40+dir"))
                 .forEach(path -> paths.add(path));
         return paths;
-    }
-
-    // the input files have embedded newlines that the test remove before round-tripping...
-    private final byte[] filterEmbeddedNewlines(final byte[] rawBytes) throws IOException {
-        // 1. filters new lines if any.
-        // 2. "q40+dir" file has an extra column delimited by tab. This column provides READ1 vs READ2 flag.
-        //     This file is also new-line separated. The extra column, '\t' and '\n' are filtered.
-        try (final ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-            int skip = 0;
-            for (final byte b : rawBytes) {
-                if (b == '\t'){
-                    skip = 1;
-                }
-                if (b == '\n') {
-                    skip = 0;
-                }
-                if (skip == 0 && b !='\n') {
-                    baos.write(b);
-                }
-            }
-            return baos.toByteArray();
-        }
-    }
-
-    // Given a test file name, map it to the corresponding rans compressed path
-    private final Path getCompressedRANSPath(final String ransType,final Path uncompressedInteropPath, RANSParams params) {
-
-        // Example compressedFileName: r4x16/q4.193
-        // the substring after "." in the compressedFileName is the formatFlags (aka. the first byte of the compressed stream)
-        final String compressedFileName = String.format("%s/%s.%s", ransType, uncompressedInteropPath.getFileName(), params.getFormatFlags());
-        return uncompressedInteropPath.getParent().resolve(compressedFileName);
     }
 
 }

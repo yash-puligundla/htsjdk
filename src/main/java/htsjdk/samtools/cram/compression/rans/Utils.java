@@ -35,7 +35,8 @@ final public class Utils {
 
     // Returns the current cumulative frequency (map it to a symbol yourself!)
     public static int RANSGetCumulativeFrequency(final long r, final int scaleBits) {
-        return (int) (r & ((1 << scaleBits) - 1)); // since cumulative frequency will be a maximum of 4096
+        // spec: bottom 12 bits of rANS state R are our frequency
+        return (int) (r & ((1 << scaleBits) - 1));
     }
 
     // Re-normalize.
