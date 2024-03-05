@@ -23,7 +23,7 @@
  */
 package htsjdk.tribble.bed;
 
-import htsjdk.tribble.Feature;
+import htsjdk.tribble.NamedFeature;
 import htsjdk.tribble.annotation.Strand;
 
 import java.awt.*;
@@ -36,7 +36,7 @@ import java.awt.*;
  * This is different than the 0-based representation in a BED file.  This conversion is handled by {@link BEDCodec}.
  * Anyone writing a bed file should be aware of this difference.
  */
-public interface BEDFeature extends Feature {
+public interface BEDFeature extends NamedFeature {
     Strand getStrand();
 
     String getType();
@@ -46,8 +46,6 @@ public interface BEDFeature extends Feature {
     String getDescription();
 
     java.util.List<FullBEDFeature.Exon> getExons();
-
-    String getName();
 
     float getScore();
 

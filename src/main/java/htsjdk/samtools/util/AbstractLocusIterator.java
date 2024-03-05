@@ -142,11 +142,6 @@ public abstract class AbstractLocusIterator<T extends AbstractRecordAndOffset, K
 
     private final LocusComparator<Locus> locusComparator = new LocusComparator<>();
 
-    /**
-     * Last processed interval, relevant only if list of intervals is defined.
-     */
-    private int lastInterval = 0;
-
 
 
     public SAMFileHeader getHeader() {
@@ -158,8 +153,7 @@ public abstract class AbstractLocusIterator<T extends AbstractRecordAndOffset, K
      * Prepare to iterate through the given SAM records, skipping non-primary alignments
      *
      * @param samReader    must be coordinate sorted
-     * @param intervalList Either the list of desired intervals, or null.  Note that if an intervalList is
-     *                     passed in that is not coordinate sorted, it will eventually be coordinated sorted by this class.
+     * @param intervalList Either the list of desired intervals, or null.
      * @param useIndex     If true, do indexed lookup to improve performance.  Not relevant if intervalList == null.
      *                     It is no longer the case the useIndex==true can make performance worse.  It should always perform at least
      *                     as well as useIndex==false, and generally will be much faster.
@@ -167,7 +161,6 @@ public abstract class AbstractLocusIterator<T extends AbstractRecordAndOffset, K
     public AbstractLocusIterator(final SamReader samReader, final IntervalList intervalList, final boolean useIndex) {
         final String className = this.getClass().getSimpleName();
         if (samReader.getFileHeader().getSortOrder() == null || samReader.getFileHeader().getSortOrder() == SAMFileHeader.SortOrder.unsorted) {
-
             LOG.warn(className + " constructed with samReader that has SortOrder == unsorted.  ", "" +
                     "Assuming SAM is coordinate sorted, but exceptions may occur if it is not.");
         } else if (samReader.getFileHeader().getSortOrder() != SAMFileHeader.SortOrder.coordinate) {
@@ -176,13 +169,21 @@ public abstract class AbstractLocusIterator<T extends AbstractRecordAndOffset, K
         this.samReader = samReader;
         this.useIndex = useIndex;
         if (intervalList != null) {
-            intervals = intervalList.uniqued().getIntervals();
-            this.referenceSequenceMask = new IntervalListReferenceSequenceMask(intervalList);
+            try {
+                SequenceUtil.assertSequenceDictionariesEqual(intervalList.getHeader().getSequenceDictionary(), getHeader().getSequenceDictionary());
+            } catch (final SequenceUtil.SequenceListsDifferException ex) {
+                throw new SequenceUtil.SequenceListsDifferException("The sequence dictionary of the interval list file " +
+                        "differs from the sequence dictionary of the input SAM file: (" + samReader.getResourceDescription() + ")", ex);
+            }
+            final IntervalList uniquedIntervalList = intervalList.uniqued();
+            this.intervals = uniquedIntervalList.getIntervals();
+            this.referenceSequenceMask = new IntervalListReferenceSequenceMask(uniquedIntervalList);
         } else {
             intervals = null;
             this.referenceSequenceMask = new WholeGenomeReferenceSequenceMask(samReader.getFileHeader());
         }
     }
+
 
     /**
      * @return iterator over all/all covered locus position in reference according to <code>emitUncoveredLoci</code>
@@ -264,6 +265,9 @@ public abstract class AbstractLocusIterator<T extends AbstractRecordAndOffset, K
      */
     @Override
     public K next() {
+        if (this.samIterator == null) {
+            iterator();
+        }
         // if we don't have any completed entries to return, try and make some!
         while (complete.isEmpty() && samHasMore()) {
             final SAMRecord rec = samIterator.peek();
@@ -574,11 +578,6 @@ public abstract class AbstractLocusIterator<T extends AbstractRecordAndOffset, K
 
     protected List<Interval> getIntervals() {
         return intervals;
-    }
-
-    protected Interval getCurrentInterval() {
-        if (intervals == null) return null;
-        return intervals.get(lastInterval);
     }
 
     public boolean isIncludeIndels() {

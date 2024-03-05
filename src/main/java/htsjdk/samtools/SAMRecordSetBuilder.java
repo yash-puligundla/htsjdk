@@ -54,6 +54,7 @@ public class SAMRecordSetBuilder implements Iterable<SAMRecord> {
             "chr21", "chr22", "chrX", "chrY", "chrM"
     };
 
+
     private static final String READ_GROUP_ID = "1";
     private static final String SAMPLE = "FREE_SAMPLE";
     private final Random random = new Random(TestUtil.RANDOM_SEED);
@@ -447,13 +448,6 @@ public class SAMRecordSetBuilder implements Iterable<SAMRecord> {
         }
         end2.setReadPairedFlag(true);
         end2.setSecondOfPairFlag(true);
-
-        if (record1NonPrimary) {
-            end1.setSecondaryAlignment(true);
-        }
-        if (record2NonPrimary) {
-            end2.setSecondaryAlignment(true);
-        }
 
         if (record1NonPrimary) {
             end1.setSecondaryAlignment(true);

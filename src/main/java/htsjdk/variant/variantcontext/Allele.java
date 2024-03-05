@@ -26,6 +26,7 @@
 package htsjdk.variant.variantcontext;
 
 import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Immutable representation of an allele.
@@ -285,7 +286,6 @@ public interface Allele extends Comparable<Allele>, Serializable {
      * @param bases  bases representing a reference allele
      * @return true if the bases represent the well formatted allele
      */
-    @Deprecated
     static boolean acceptableAlleleBases(String bases) {
         return acceptableAlleleBases(bases.getBytes(), true);
     }
@@ -295,16 +295,14 @@ public interface Allele extends Comparable<Allele>, Serializable {
      * @param isReferenceAllele is a reference allele
      * @return true if the bases represent the well formatted allele
      */
-    @Deprecated
     static boolean acceptableAlleleBases(String bases, boolean isReferenceAllele) {
-        return acceptableAlleleBases(bases.getBytes(), isReferenceAllele);
+        return acceptableAlleleBases(bases.getBytes(StandardCharsets.UTF_8), isReferenceAllele);
     }
 
     /**
      * @param bases  bases representing a reference allele
      * @return true if the bases represent the well formatted allele
      */
-    @Deprecated
     static boolean acceptableAlleleBases(byte[] bases) {
         return acceptableAlleleBases(bases, true);
     }
@@ -315,7 +313,6 @@ public interface Allele extends Comparable<Allele>, Serializable {
      * @param isReferenceAllele true if a reference allele
      * @return true if the bases represent the well formatted allele
      */
-    @Deprecated
     static boolean acceptableAlleleBases(byte[] bases, boolean isReferenceAllele) {
         if ( wouldBeNullAllele(bases) )
             return false;
@@ -434,5 +431,8 @@ public interface Allele extends Comparable<Allele>, Serializable {
 
     int length();
 
+    /**
+     *  @return true if Allele is either {@code <NON_REF>} or {@code <*>}
+     */
     boolean isNonRefAllele();
 }

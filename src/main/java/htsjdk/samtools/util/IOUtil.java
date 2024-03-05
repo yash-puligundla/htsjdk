@@ -582,6 +582,18 @@ public class IOUtil {
         for (final File file : files) assertFileIsWritable(file);
     }
 
+
+    /**
+     * In some filesystems (e.g. google cloud) it may not make sense to check writability.
+     * This method only checks writability when it's (i.e. for now when the path points to a file
+     * in the local filesystem)
+     */
+    public static void assertFileIsWritable(final Path path){ // tsato: perhaps the input type should be IOPath
+        if (path.toUri().getScheme().equals("file")){
+            IOUtil.assertFileIsWritable(path.toFile());
+        }
+    }
+
     /**
      * Checks that a directory is non-null, extent, writable and a directory
      * otherwise a runtime exception is thrown.
@@ -867,7 +879,8 @@ public class IOUtil {
     }
 
     public static OutputStream openFileForMd5CalculatingWriting(final Path file) {
-        return new Md5CalculatingOutputStream(IOUtil.openFileForWriting(file), file.resolve(".md5"));
+        final Path digestFile = file.resolveSibling(file.getFileName() + FileExtensions.MD5);
+        return new Md5CalculatingOutputStream(IOUtil.openFileForWriting(file), digestFile);
     }
 
     /**
@@ -974,25 +987,34 @@ public class IOUtil {
     }
 
     /**
-     * Create a temporary subdirectory in the default temporary-file directory, using the given prefix and suffix to generate the name.
+     * Create a temporary subdirectory in the default temporary-file directory, using the given prefix and morePrefix to generate the name.
      * Note that this method is not completely safe, because it create a temporary file, deletes it, and then creates
      * a directory with the same name as the file.  Should be good enough.
      *
-     * @param prefix The prefix string to be used in generating the file's name; must be at least three characters long
-     * @param suffix The suffix string to be used in generating the file's name; may be null, in which case the suffix ".tmp" will be used
+     * This has been updated to avoid the problem in https://github.com/samtools/htsjdk/pull/1617
+     *
+     * @param prefix The prefix string to be used in generating the file's name;
+     * @param morePrefix This was previously a suffix but the implementation changed; may be null, in which case the morePrefix ".tmp" will be used
      * @return File object for new directory
+     * @deprecated  Use {@link #createTempDir(String)} instead.
+     *              It turns out the mechanism was not "good enough" and caused security issues, the new implementation
+     *              combines the prefix/morePrefix into a single prefix.  The security flaw is fixed but due to the now
+     *              extraneous morePrefix argument it is recommended to use the 1 argument form.
      */
-    public static File createTempDir(final String prefix, final String suffix) {
+    @Deprecated
+    public static File createTempDir(final String prefix, final String morePrefix) {
+        final String dotSeparatedSuffix = morePrefix == null ? ".tmp" : morePrefix.startsWith(".") ? morePrefix : "." + morePrefix;
+        return createTempDir(prefix + dotSeparatedSuffix).toFile() ;
+    }
+
+    /*
+     * Create a temporary subdirectory in the default temporary-file directory, using the given prefix and suffix to generate the name.
+     * @param prefix The prefix string to be used in generating the file's name, may be null
+     */
+    public static Path createTempDir(final String prefix) {
         try {
-            final File tmp = File.createTempFile(prefix, suffix);
-            if (!tmp.delete()) {
-                throw new SAMException("Could not delete temporary file " + tmp);
-            }
-            if (!tmp.mkdir()) {
-                throw new SAMException("Could not create temporary directory " + tmp);
-            }
-            return tmp;
-        } catch (IOException e) {
+            return Files.createTempDirectory(prefix);
+        } catch (final IOException e) {
             throw new SAMException("Exception creating temporary directory.", e);
         }
     }
@@ -1160,7 +1182,7 @@ public class IOUtil {
 
         while (!stack.empty()) {
             final Path p = stack.pop();
-            final String name = p.toString();
+            final String name = p.getFileName().toString();
             boolean matched = false;
 
             for (final String ext : extensions) {

@@ -61,13 +61,26 @@ public class SAMReadGroupRecord extends AbstractSAMHeaderRecord
     public enum PlatformValue {
         /** @deprecated Use {@linkplain PlatformValue#DNBSEQ} instead. */
         @Deprecated BGI,
+
+        /** Capillary */
         CAPILLARY,
         
         /** MGI/BGI */
         DNBSEQ,
+
+        /** Element Biosciences */
+        ELEMENT,
+
+        /** Helicos Biosciences */
         HELICOS,
+
+        /** Illumina */
         ILLUMINA,
+
+        /** Iontorrent */
         IONTORRENT,
+
+        /** 454 Life Sciences */
         LS454,
 
         /** Oxford Nanopore */
@@ -78,7 +91,15 @@ public class SAMReadGroupRecord extends AbstractSAMHeaderRecord
 
         /** Pacific Biotechnology */
         PACBIO,
-        SOLID
+        
+        /** Singular Genomics */
+        SINGULAR,
+
+        /** Life Technologies */
+        SOLID,
+
+        /** Ultima Genomics */
+        ULTIMA
     }
 
     public static final Set<String> STANDARD_TAGS =

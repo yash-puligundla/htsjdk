@@ -32,6 +32,7 @@ import htsjdk.samtools.cram.common.MutableInt;
 import htsjdk.samtools.cram.encoding.readfeatures.BaseQualityScore;
 import htsjdk.samtools.cram.encoding.readfeatures.ReadBase;
 import htsjdk.samtools.cram.encoding.readfeatures.ReadFeature;
+import htsjdk.samtools.cram.encoding.readfeatures.Scores;
 import htsjdk.samtools.util.Log;
 import htsjdk.samtools.util.SequenceUtil;
 import htsjdk.utils.ValidationUtils;
@@ -364,7 +365,7 @@ public class CRAMCompressionRecord {
      * that the record's read bases, quality scores, and mate graph are not stored directly as part of the
      * record. Normalization is the process of resolving these values, and is performed at Slice granularity,
      * across all records in a Slice.
-     * (see {@link Slice#normalizeCRAMRecords(List, CRAMReferenceRegion, SubstitutionMatrix)}).
+     * (see {@link Slice#normalizeCRAMRecords(List, CRAMReferenceRegion)}).
      */
     void setIsNormalized() { isNormalized = true; }
 
@@ -373,7 +374,7 @@ public class CRAMCompressionRecord {
      * scores, and mate graph are not stored directly as part of the record. These values must be resolved
      * through the separate process of normalization, which is performed at Slice granularity (all records in a
      * Slice are normalized at the same time).
-     * (see {@link Slice#normalizeCRAMRecords(List, CRAMReferenceRegion, SubstitutionMatrix)}).
+     * (see {@link Slice#normalizeCRAMRecords(List, CRAMReferenceRegion)}).
      * @return true if this record is normalized
      */
     public boolean isNormalized() { return isNormalized; }
@@ -391,6 +392,17 @@ public class CRAMCompressionRecord {
                     case BaseQualityScore.operator:
                         int pos = feature.getPosition();
                         scores[pos - 1] = ((BaseQualityScore) feature).getQualityScore();
+                        hasMissingScores = false;
+                        break;
+                    case Scores.operator:
+                        final Scores scoresFeature = (Scores) feature;
+                        pos = scoresFeature.getPosition();
+                        System.arraycopy(
+                                scoresFeature.getScores(),
+                                0,
+                                scores,
+                                pos - 1,
+                                scoresFeature.getScores().length);
                         hasMissingScores = false;
                         break;
                     case ReadBase.operator:
@@ -443,16 +455,13 @@ public class CRAMCompressionRecord {
     }
 
     /**
+     * Restore the actual read bases for this record.
      *
-     * @param referenceBases reference bases for this reference, if one is required (may be null for records with
-     *                 RR=false in the compression header)
-     * @param zeroBasedReferenceOffset zero-based reference offset of the first base in {@code referenceBases}
-     * @param substitutionMatrix substitution matrix
+     * @param cramReferenceRegion CRAMReferenceRegion spanning the reference bases for this record, if reference
+     *                           bases are required (may be null for records with RR=false in the compression header)
+     * @param substitutionMatrix substitution matrix to use for this record
      */
-    public void restoreReadBases(
-            final byte[] referenceBases,
-            final int zeroBasedReferenceOffset,
-            final SubstitutionMatrix substitutionMatrix) {
+    public void restoreReadBases(CRAMReferenceRegion cramReferenceRegion, final SubstitutionMatrix substitutionMatrix) {
         if (isUnknownBases()) {
             readBases = SAMRecord.NULL_SEQUENCE;
         } else {
@@ -463,8 +472,7 @@ public class CRAMCompressionRecord {
                     isUnknownBases(),
                     alignmentStart,
                     readLength,
-                    referenceBases,
-                    zeroBasedReferenceOffset,
+                    cramReferenceRegion,
                     substitutionMatrix);
         }
     }
